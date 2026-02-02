@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "chatimprover",
+	"version": "${version}",
+	"name": "ChatImprover",
+	"description": "Мод, позволяющий улучшать сообщения в чате",
+	"authors": [
+		"Ayoree"
+	],
+	"contact": {
+		"homepage": "https://github.com/Ayoree/ChatImprover"
+	},
+	"license": "AGPL-3.0",
+	"icon": "assets/chatimprover/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"org.ayoree.chatimprover.ChatImprover"
+		],
+		"modmenu": [
+			"org.ayoree.chatimprover.internal.ModMenuIntegration"
+		]
+	},
+	"mixins": [
+		"chatimprover.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*",
+		"yet_another_config_lib_v3": "*"
+	}
+}
