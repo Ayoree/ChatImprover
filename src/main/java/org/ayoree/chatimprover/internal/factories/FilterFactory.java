@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.ServiceLoader;
 
 import org.ayoree.chatimprover.api.Filter;
-import org.ayoree.chatimprover.internal.Config;
+import org.ayoree.chatimprover.internal.configs.Config;
 
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;

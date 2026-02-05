@@ -17,12 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal;
+package org.ayoree.chatimprover.internal.screens;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.ayoree.chatimprover.api.ChatMessage;
+import org.ayoree.chatimprover.internal.configs.Config;
 import org.ayoree.chatimprover.internal.factories.ChatMessageFactory;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;

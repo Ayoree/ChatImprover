@@ -17,7 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal;
+package org.ayoree.chatimprover.internal.configs;
+
+import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
+
+import java.util.ArrayList;
+
+import org.ayoree.chatimprover.internal.configs.customconfig.helpers.CustomConfigEntry;
 
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
@@ -25,40 +31,19 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 
-import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
-
-import java.util.HashSet;
-
-import static org.ayoree.chatimprover.ChatImprover.LOGGER;
-
-public class Config {
+public class CustomScreenConfig {
     @SerialEntry
-    public boolean isBlockTrash = true;
+    public String title = "Заголовок";
     @SerialEntry
-    public boolean isImproveMessages = true;
-    @SerialEntry
-    public HashSet<String> disabledAddons = new HashSet<>();
+    public ArrayList<CustomConfigEntry> entries = new ArrayList<>();
 
-    private static Config instance = null;
-    private static ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
-            .id(Identifier.of(MOD_ID, "config"))
+    public static ConfigClassHandler<CustomScreenConfig> createHandler(String configID) {
+        return ConfigClassHandler.createBuilder(CustomScreenConfig.class)
+            .id(Identifier.of(MOD_ID,  configID))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(FabricLoader.getInstance().getConfigDir().resolve("chatimprover/%s.json5".formatted(MOD_ID)))
+                    .setPath(FabricLoader.getInstance().getConfigDir().resolve("%s/configs/%s.json5".formatted(MOD_ID, configID)))
                     .setJson5(true)
                     .build())
             .build();
-
-    public static void save() {
-        HANDLER.save();
-    }
-
-    public static Config getInst() {
-        if (instance == null) {
-            if (HANDLER.load())
-                instance = HANDLER.instance();
-            else
-                LOGGER.error("Failed to load config");
-        }
-        return instance;
     }
 }

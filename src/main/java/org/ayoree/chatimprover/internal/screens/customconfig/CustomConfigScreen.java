@@ -17,28 +17,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal.handlers;
+package org.ayoree.chatimprover.internal.screens.customconfig;
 
-import java.util.function.Function;
-
-
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-
-public class CommandToScreenHandler {
-    private static Function<MinecraftClient, Screen> OPENER = null;
-
-    public static void init() {
-        ClientTickEvents.END_CLIENT_TICK.register(CommandToScreenHandler::checkScreens);
-    }
-
-    private static void checkScreens(MinecraftClient client) {
-        if (OPENER != null) {
-            client.setScreen(OPENER.apply(client));
-            OPENER = null;
-        }
-    }
-
-    public static void openScreen(Function<MinecraftClient, Screen> screen) { OPENER = screen; }
+public class CustomConfigScreen {
+    
 }

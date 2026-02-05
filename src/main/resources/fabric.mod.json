@@ -18,7 +18,7 @@
 			"org.ayoree.chatimprover.ChatImprover"
 		],
 		"modmenu": [
-			"org.ayoree.chatimprover.internal.ModMenuIntegration"
+			"org.ayoree.chatimprover.internal.screens.ModMenuIntegration"
 		]
 	},
 	"mixins": [

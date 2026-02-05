@@ -21,7 +21,7 @@ package org.ayoree.chatimprover;
 
 import net.fabricmc.api.ModInitializer;
 
-import org.ayoree.chatimprover.internal.ShowMessagesCommand;
+import org.ayoree.chatimprover.internal.CustomCommands;
 import org.ayoree.chatimprover.internal.handlers.AttackHandler;
 import org.ayoree.chatimprover.internal.handlers.ChatHandler;
 import org.ayoree.chatimprover.internal.handlers.ConnectionHandler;
@@ -37,7 +37,7 @@ public class ChatImprover implements ModInitializer {
 		ChatHandler.init();
 		ConnectionHandler.init();
 		AttackHandler.init();
-		ShowMessagesCommand.Init();
+		CustomCommands.Init();
 		LOGGER.info("`%s` mod initialized".formatted(MOD_ID));
 	}
 }

@@ -20,7 +20,7 @@
 package org.ayoree.chatimprover.internal.handlers;
 
 import org.ayoree.chatimprover.api.ChatMessage;
-import org.ayoree.chatimprover.internal.Config;
+import org.ayoree.chatimprover.internal.configs.Config;
 import org.ayoree.chatimprover.internal.factories.ChatMessageFactory;
 import org.ayoree.chatimprover.internal.factories.FilterFactory;
 

@@ -24,8 +24,6 @@ import java.util.Stack;
 
 import org.ayoree.chatimprover.mixin.ChatHudAccessor;
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -38,10 +36,11 @@ import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 public class LastMessagesScreen {
-    static public ConfigScreenFactory<?> generateScreen() {
+    public static Screen createScreen(final Screen parentScreen) {
         YetAnotherConfigLib.Builder builder = YetAnotherConfigLib.createBuilder().title(Text.empty());
 
         ConfigCategory.Builder categoryBuilder = ConfigCategory.createBuilder()
@@ -66,9 +65,7 @@ public class LastMessagesScreen {
         }
         builder.category(categoryBuilder.build());
 
-        return parentScreen -> builder
-            .build()
-            .generateScreen(parentScreen);
+        return builder.build().generateScreen(parentScreen);
     }
 
     static private void addRecursiveOptions(OptionGroup.Builder builder, Stack<Integer> depth, Text text) {
