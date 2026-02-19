@@ -1,0 +1,105 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <flow-layout direction="vertical">
+                    <children>
+                        <label>
+                            <text>Chat Improver</text>
+                        </label>
+                    </children>
+                    <horizontal-alignment>center</horizontal-alignment>
+                    <vertical-alignment>center</vertical-alignment>
+                    <sizing>
+                        <horizontal method="fill">100</horizontal>
+                        <vertical method="fill">10</vertical>
+                    </sizing>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+                        <flow-layout direction="vertical" id="container">
+                            <children>
+                                <checkbox id="isBlockTrash">
+                                    <text>Блокировать спам</text>
+                                    <tooltip-text>Блокировать серверный спам (реклама и прочее)</tooltip-text>
+                                </checkbox>
+                                <checkbox id="isImproveMessages">
+                                    <text>Изменять сообщения</text>
+                                    <tooltip-text>Менять сообщения в чате на более удобный вид</tooltip-text>
+                                </checkbox>
+                                <label>
+                                    <text>Аддоны</text>
+                                    <margins>
+                                        <top>10</top>
+                                        <bottom>5</bottom>
+                                    </margins>
+                                </label>
+                            </children>
+                            <horizontal-alignment>left</horizontal-alignment>
+                            <vertical-alignment>top</vertical-alignment>
+                            <sizing>
+                                <horizontal method="fill">40</horizontal>
+                                <vertical method="fill">100</vertical>
+                            </sizing>
+                        </flow-layout>
+                    </children>
+                    <horizontal-alignment>center</horizontal-alignment>
+                    <vertical-alignment>center</vertical-alignment>
+                    <padding>
+                        <top>20</top>
+                        <bottom>20</bottom>
+                    </padding>
+                    <sizing>
+                        <horizontal method="fill">105</horizontal>
+                        <vertical method="fill">80</vertical>
+                    </sizing>
+                    <surface>
+                        <blur quality="4" size="8"/>
+                        <outline>white</outline>
+                    </surface>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+                        <button id="btn_close">
+                            <text>Закрыть</text>
+                            <margins>
+                                <left>30</left>
+                                <right>30</right>
+                            </margins>
+                            <sizing>
+                                <horizontal method="fill">14</horizontal>
+                                <vertical method="fixed">28</vertical>
+                            </sizing>
+                        </button>
+                        <button id="btn_save">
+                            <text>Сохранить</text>
+                            <margins>
+                                <left>30</left>
+                                <right>30</right>
+                            </margins>
+                            <sizing>
+                                <horizontal method="fill">14</horizontal>
+                                <vertical method="fixed">28</vertical>
+                            </sizing>
+                        </button>
+                    </children>
+                    <horizontal-alignment>center</horizontal-alignment>
+                    <vertical-alignment>center</vertical-alignment>
+                    <sizing>
+                        <horizontal method="fill">100</horizontal>
+                        <vertical method="fill">10</vertical>
+                    </sizing>
+                </flow-layout>
+            </children>
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+            <surface>
+                <blur quality="4" size="8"/>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+</owo-ui>

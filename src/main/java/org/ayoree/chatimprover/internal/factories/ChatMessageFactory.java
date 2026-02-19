@@ -19,13 +19,14 @@
 
 package org.ayoree.chatimprover.internal.factories;
 
+import static org.ayoree.chatimprover.ChatImprover.CONFIG;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import org.ayoree.chatimprover.api.ChatMessage;
-import org.ayoree.chatimprover.internal.configs.Config;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.network.ServerInfo;
@@ -50,14 +51,13 @@ public class ChatMessageFactory {
 
     public static ChatMessage createChatMessage(Text text) {
         if (SERVER_INFO != null) {
-            final HashSet<String> disabledAddons = Config.getInst().disabledAddons;
+            final Set<String> disabledAddons = CONFIG.disabledAddons();
             ArrayList<ChatMessage.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.address, new ArrayList<>());
             for (final ChatMessage.Provider provider : arr) {
                 if (disabledAddons.contains(provider.addonID().get()))
                     continue;
-                if (provider.validator().test(text)) {
+                if (provider.validator().test(text))
                     return provider.creator().apply(text);
-                }
             }
         }
         return new ChatMessage(text);
@@ -66,7 +66,7 @@ public class ChatMessageFactory {
     public static void setCurrentServer(ServerInfo serverInfo) {
         SERVER_INFO = serverInfo;
     }
-
+    
     public static final @NotNull ArrayList<ChatMessage.Provider> getAllProviders() {
         ArrayList<ChatMessage.Provider> providers = new ArrayList<>();
         REGISTRY.forEach((k, arr) -> {

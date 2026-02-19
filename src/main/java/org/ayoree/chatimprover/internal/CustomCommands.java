@@ -19,14 +19,10 @@
 
 package org.ayoree.chatimprover.internal;
 
-import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
-import org.ayoree.chatimprover.internal.configs.Config;
-import org.ayoree.chatimprover.internal.configs.CustomScreenConfig;
 import org.ayoree.chatimprover.internal.handlers.CommandToScreenHandler;
 import org.ayoree.chatimprover.internal.screens.LastMessagesScreen;
-import org.ayoree.chatimprover.internal.screens.customconfig.EditCustomConfigScreen;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -35,12 +31,10 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
 
 public class CustomCommands {
     public static void Init() {
@@ -53,7 +47,7 @@ public class CustomCommands {
             .literal("debug_messages")
                 .executes(context -> {
                     CommandToScreenHandler.openScreen(
-                        client -> LastMessagesScreen.createScreen(client.currentScreen)
+                        parentScreen -> new LastMessagesScreen(parentScreen)
                     );
                     return Command.SINGLE_SUCCESS;
                 }
@@ -69,13 +63,13 @@ public class CustomCommands {
                     .then(ClientCommandManager
                         .argument("configName", StringArgumentType.word())
                         .executes(context -> {
-                            String configName = context.getArgument("configName", String.class);
-                            Config config = Config.getInst();
-                            if (!config.screenConfigs.containsKey(configName))
-                                Config.getInst().createScreenConfig(configName);
-                            else {
-                                context.getSource().sendFeedback(Text.literal("Конфиг с таким названием уже существует"));
-                            }
+                            // String configName = context.getArgument("configName", String.class);
+                            // Config config = Config.getInst();
+                            // if (!config.screenConfigs.containsKey(configName))
+                            //     Config.getInst().createScreenConfig(configName);
+                            // else {
+                            //     context.getSource().sendFeedback(Text.literal("Конфиг с таким названием уже существует"));
+                            // }
                             return Command.SINGLE_SUCCESS;
                         })
                     )
@@ -86,15 +80,15 @@ public class CustomCommands {
                         .argument("configName", StringArgumentType.word())
                         .suggests(suggestionProvider)
                         .executes(context -> {
-                            final String configName = context.getArgument("configName", String.class);
-                            final HashMap<String, ConfigClassHandler<CustomScreenConfig>> screenConfigs = Config.getInst().screenConfigs;
-                            if (!screenConfigs.containsKey(configName))
-                                context.getSource().sendFeedback(Text.literal("Конфига с таким названием нет"));
-                            else {
-                                CommandToScreenHandler.openScreen(
-                                    client -> EditCustomConfigScreen.createScreen(client.currentScreen, screenConfigs.get(configName))
-                                );
-                            }
+                            // final String configName = context.getArgument("configName", String.class);
+                            // final HashMap<String, ConfigClassHandler<CustomScreenConfig>> screenConfigs = Config.getInst().screenConfigs;
+                            // if (!screenConfigs.containsKey(configName))
+                            //     context.getSource().sendFeedback(Text.literal("Конфига с таким названием нет"));
+                            // else {
+                            //     CommandToScreenHandler.openScreen(
+                            //         client -> EditCustomConfigScreen.createScreen(client.currentScreen, screenConfigs.get(configName))
+                            //     );
+                            // }
                             return Command.SINGLE_SUCCESS;
                         })
                     )
@@ -109,11 +103,11 @@ public class CustomCommands {
     private static CompletableFuture<Suggestions> getSuggestions(SuggestionsBuilder builder) {
         String remaining = builder.getRemaining().toLowerCase();
         
-        for (String key : Config.getInst().screenConfigs.keySet()) {
-            if (key.toLowerCase().startsWith(remaining)) {
-                builder.suggest(key);
-            }
-        }
+        // for (String key : Config.getInst().screenConfigs.keySet()) {
+        //     if (key.toLowerCase().startsWith(remaining)) {
+        //         builder.suggest(key);
+        //     }
+        // }
         
         return builder.buildFuture();
     }

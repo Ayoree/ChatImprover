@@ -9,7 +9,7 @@ buildscript {
 
 plugins {
 	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
-	id 'net.octyl.level-headered' version "${octyl_headered_version}"
+	id 'dev.yumi.gradle.licenser' version "${licenser_version}"
 	id 'maven-publish'
 }
 
@@ -24,15 +24,9 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	// ModMenu
-	maven {
-		name = "Terraformers"
-		url = "https://maven.terraformersmc.com/"
-	}
-	// YACL
-	maven {
-        name 'Xander Maven'
-        url 'https://maven.isxander.dev/releases'
-    }
+	maven { url = "https://maven.terraformersmc.com/" }
+	// OWO lib
+	maven { url 'https://maven.wispforest.io' }
 }
 
 dependencies {
@@ -50,8 +44,9 @@ dependencies {
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-	// YACL
-	modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
+	// OWO
+	modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+    annotationProcessor "io.wispforest:owo-lib:${project.owo_version}"
 }
 
 processResources {
@@ -79,20 +74,10 @@ jar {
 	}
 }
 
-levelHeadered {
-    headerTemplate(rootProject.file("HEADER.txt"))
-    
-    sourceMatchPatterns {
-        //exclude('org/ayoree/chatimprover/somefolder/')
-    }
-}
-
-levelHeadered {
-    headerTemplate(rootProject.file("HEADER.txt"))
-    
-    sourceMatchPatterns {
-        //exclude('org/ayoree/chatimprover/somefolder/')
-    }
+license {
+	rule(file("HEADER.txt"))
+	include("**/*.java")
+	exclude("**/ChatimproverConfig.java")
 }
 
 task proguard(type: proguard.gradle.ProGuardTask) {

@@ -20,7 +20,6 @@
 package org.ayoree.chatimprover.internal.handlers;
 
 import org.ayoree.chatimprover.api.ChatMessage;
-import org.ayoree.chatimprover.internal.configs.Config;
 import org.ayoree.chatimprover.internal.factories.ChatMessageFactory;
 import org.ayoree.chatimprover.internal.factories.FilterFactory;
 
@@ -34,14 +33,14 @@ public class ChatHandler {
     }
 
     private static boolean onAllowMessage(Text message, boolean isOverlay) {
-         if (!Config.getInst().isBlockTrash)
-            return true;
+        // if (!Config.getInst().isBlockTrash)
+        //     return true;
         return !FilterFactory.testAllFilters(message);
     }
 
     private static Text onMessageReceive(Text origMessage, boolean overlay) {
-        if (!Config.getInst().isImproveMessages)
-            return origMessage;
+        // if (!Config.getInst().isImproveMessages)
+        //     return origMessage;
         ChatMessage message = ChatMessageFactory.createChatMessage(origMessage);
         return message.getChangedMessage();
     }

@@ -27,7 +27,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 
 public class CommandToScreenHandler {
-    private static Function<MinecraftClient, Screen> OPENER = null;
+    private static Function<Screen, Screen> OPENER = null;
 
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(CommandToScreenHandler::checkScreens);
@@ -35,10 +35,10 @@ public class CommandToScreenHandler {
 
     private static void checkScreens(MinecraftClient client) {
         if (OPENER != null) {
-            client.setScreen(OPENER.apply(client));
+            client.setScreen(OPENER.apply(client.currentScreen));
             OPENER = null;
         }
     }
 
-    public static void openScreen(Function<MinecraftClient, Screen> screen) { OPENER = screen; }
+    public static void openScreen(Function<Screen, Screen> screen) { OPENER = screen; }
 }

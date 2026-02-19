@@ -24,72 +24,121 @@ import java.util.Stack;
 
 import org.ayoree.chatimprover.mixin.ChatHudAccessor;
 
+import io.wispforest.owo.ui.base.BaseUIModelScreen;
+import io.wispforest.owo.ui.component.ButtonComponent;
+import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.DropdownComponent;
+import io.wispforest.owo.ui.container.CollapsibleContainer;
+import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.ScrollContainer;
+import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.HorizontalAlignment;
+import io.wispforest.owo.ui.core.Insets;
+import io.wispforest.owo.ui.core.Size;
+import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.VerticalAlignment;
+
+import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
-import dev.isxander.yacl3.api.ButtonOption;
-import dev.isxander.yacl3.api.ConfigCategory;
-import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.OptionGroup;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
-public class LastMessagesScreen {
-    public static Screen createScreen(final Screen parentScreen) {
-        YetAnotherConfigLib.Builder builder = YetAnotherConfigLib.createBuilder().title(Text.empty());
+public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
+    private static final String ID_CONTAINER = "container";
+    private final Screen m_parent;
 
-        ConfigCategory.Builder categoryBuilder = ConfigCategory.createBuilder()
-                .name(Text.literal("Последние сообщения"))
-                .tooltip(Text.literal("Ты нашёл печеньку! 🍪"));
+    public LastMessagesScreen(Screen parent) {
+        super(FlowLayout.class, DataSource.asset(Identifier.of(MOD_ID, "debug_messages_ui")));
+        m_parent = parent;
+    }
 
+    @Override
+    public void close() {
+        client.setScreen(m_parent);
+    }
+
+    @Override
+    protected void build(FlowLayout rootComponent) {
+        final FlowLayout container = rootComponent.childById(FlowLayout.class, ID_CONTAINER);
+        
         ChatHud chatHud = MinecraftClient.getInstance().inGameHud.getChatHud();
         List<ChatHudLine> messages = ((ChatHudAccessor) chatHud).getMessages();
 
         int i = 0;
         for (ChatHudLine chatHudLine : messages) {
-            OptionGroup.Builder optionGroupBuilder = OptionGroup.createBuilder()
-                        .name(Text.literal(Integer.toString(i)))
-                        .description(OptionDescription.of(chatHudLine.content()));
-
             Stack<Integer> depth = new Stack<Integer>();
-            addRecursiveOptions(optionGroupBuilder, depth, chatHudLine.content());
-            categoryBuilder.group(optionGroupBuilder.build());
+            addRecursiveOptions(container, depth, chatHudLine.content());
 
-            if (++i >= 10)
+            if (++i >= 50)
                 break;
         }
-        builder.category(categoryBuilder.build());
-
-        return builder.build().generateScreen(parentScreen);
     }
 
-    static private void addRecursiveOptions(OptionGroup.Builder builder, Stack<Integer> depth, Text text) {
-        String curIndex = "";
-        for (final int i : depth)
-            curIndex += "[" + i + "]";
-        if (curIndex.isEmpty()) curIndex = "Main";
-
-        builder.option(ButtonOption.createBuilder()
-                .name(Text.literal(curIndex))
-                .text(Text.literal("`").append(text).append("`"))
-                .description(OptionDescription.of(text))
-                .action((screen, btn) -> {
-                    Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    StringSelection data = new StringSelection(text.getString());
-                    cb.setContents(data, null);
-                })
-                .build());
-
-        depth.push(0);
-        for (final Text sibling : text.getSiblings()) {
-            addRecursiveOptions(builder, depth, sibling);
-            depth.push(depth.pop() + 1);
+    static private void addRecursiveOptions(final FlowLayout container, Stack<Integer> depth, final Text text) {
+        final List<Text> siblings = text.getSiblings();
+        String curIndex = "Main";
+        if (!depth.empty()) {
+            final int i = depth.lastElement();
+            curIndex = "[" + i + "]";
         }
-        depth.pop();
+
+        Text textNoStyle = removeMouseStyles(text.copy());
+
+        FlowLayout flow = Containers.horizontalFlow(Sizing.fill(100), Sizing.content());
+        flow.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+        container.child(flow);
+        ButtonComponent copyButton = Components.button(Text.of(curIndex), btn -> {
+                Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+                StringSelection data = new StringSelection(text.getString());
+                cb.setContents(data, null);
+            });
+        copyButton.tooltip(Text.of("Копировать"));
+        copyButton.margins(Insets.right(5));
+        flow.child(copyButton);
+        if (siblings.isEmpty())
+            flow.child(Components.label(textNoStyle));
+        else {
+            CollapsibleContainer collapsible = Containers.collapsible(Sizing.fill(100), Sizing.content(), textNoStyle, false);
+            flow.child(collapsible);
+            depth.push(0);
+            for (final Text sibling : text.getSiblings()) {
+                addRecursiveOptions(collapsible, depth, sibling);
+                depth.push(depth.pop() + 1);
+            }
+            depth.pop();
+        }
+    }
+
+    static private Text removeMouseStyles(MutableText text) {
+
+        Style textStyle = text.getStyle();
+        MutableText textNoStyle;
+        if (textStyle.getHoverEvent() != null || textStyle.getClickEvent() != null) {
+            textStyle = textStyle.withHoverEvent(null);
+            textStyle = textStyle.withClickEvent(null);
+            textNoStyle = text.copy().setStyle(textStyle);
+        }
+        else
+            textNoStyle = text;
+
+        final List<Text> siblings = text.getSiblings();
+        for (int i = 0; i < siblings.size(); ++i) {
+            final MutableText sibling = siblings.get(i).copy();
+            siblings.set(i, removeMouseStyles(sibling));
+        }
+
+        return textNoStyle;
     }
 }

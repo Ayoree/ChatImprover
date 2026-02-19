@@ -19,13 +19,15 @@
 
 package org.ayoree.chatimprover.internal.factories;
 
+import static org.ayoree.chatimprover.ChatImprover.CONFIG;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import org.ayoree.chatimprover.api.Filter;
-import org.ayoree.chatimprover.internal.configs.Config;
+import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.text.Text;
@@ -49,14 +51,13 @@ public class FilterFactory {
 
     public static boolean testAllFilters(Text text) {
         if (SERVER_INFO != null) {
-            final HashSet<String> disabledAddons = Config.getInst().disabledAddons;
+            final Set<String> disabledAddons = CONFIG.disabledAddons();
             ArrayList<Filter.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.address, new ArrayList<>());
             for (final Filter.Provider provider : arr) {
                 if (disabledAddons.contains(provider.addonID().get()))
                     continue;
-                if (provider.validator().test(text)) {
+                if (provider.validator().test(text))
                     return true;
-                }
             }
         }
         return false;
@@ -64,5 +65,13 @@ public class FilterFactory {
 
     public static void setCurrentServer(ServerInfo serverInfo) {
         SERVER_INFO = serverInfo;
+    }
+    
+    public static final @NotNull ArrayList<Filter.Provider> getAllProviders() {
+        ArrayList<Filter.Provider> providers = new ArrayList<>();
+        REGISTRY.forEach((k, arr) -> {
+            providers.addAll(arr);
+        });
+        return providers;
     }
 }
