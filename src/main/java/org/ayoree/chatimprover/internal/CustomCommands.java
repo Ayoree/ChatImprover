@@ -22,6 +22,7 @@ package org.ayoree.chatimprover.internal;
 import java.util.concurrent.CompletableFuture;
 
 import org.ayoree.chatimprover.internal.handlers.CommandToScreenHandler;
+import org.ayoree.chatimprover.internal.screens.ChatimproverEditCustomConfigScreen;
 import org.ayoree.chatimprover.internal.screens.LastMessagesScreen;
 
 import com.mojang.brigadier.Command;
@@ -55,7 +56,6 @@ public class CustomCommands {
         );
 
         SuggestionProvider<FabricClientCommandSource> suggestionProvider = (context, builder) -> getSuggestions(builder);
-
         dispatcher.register(ClientCommandManager
             .literal("ayo")
                 .then(ClientCommandManager
@@ -74,24 +74,33 @@ public class CustomCommands {
                         })
                     )
                 )
+                // .then(ClientCommandManager
+                //     .literal("edit")
+                //     .then(ClientCommandManager
+                //         .argument("configName", StringArgumentType.word())
+                //         .suggests(suggestionProvider)
+                //         .executes(context -> {
+                //             // final String configName = context.getArgument("configName", String.class);
+                //             // final HashMap<String, ConfigClassHandler<CustomScreenConfig>> screenConfigs = Config.getInst().screenConfigs;
+                //             // if (!screenConfigs.containsKey(configName))
+                //             //     context.getSource().sendFeedback(Text.literal("Конфига с таким названием нет"));
+                //             // else {
+                //             //     CommandToScreenHandler.openScreen(
+                //             //         client -> EditCustomConfigScreen.createScreen(client.currentScreen, screenConfigs.get(configName))
+                //             //     );
+                //             // }
+                //             return Command.SINGLE_SUCCESS;
+                //         })
+                //     )
+                // )
                 .then(ClientCommandManager
                     .literal("edit")
-                    .then(ClientCommandManager
-                        .argument("configName", StringArgumentType.word())
-                        .suggests(suggestionProvider)
-                        .executes(context -> {
-                            // final String configName = context.getArgument("configName", String.class);
-                            // final HashMap<String, ConfigClassHandler<CustomScreenConfig>> screenConfigs = Config.getInst().screenConfigs;
-                            // if (!screenConfigs.containsKey(configName))
-                            //     context.getSource().sendFeedback(Text.literal("Конфига с таким названием нет"));
-                            // else {
-                            //     CommandToScreenHandler.openScreen(
-                            //         client -> EditCustomConfigScreen.createScreen(client.currentScreen, screenConfigs.get(configName))
-                            //     );
-                            // }
-                            return Command.SINGLE_SUCCESS;
-                        })
-                    )
+                    .executes(context -> {
+                        CommandToScreenHandler.openScreen(
+                            parentScreen -> new ChatimproverEditCustomConfigScreen(parentScreen)
+                        );
+                        return Command.SINGLE_SUCCESS;
+                    })
                 )
                 .executes(context -> {
                     
@@ -101,8 +110,7 @@ public class CustomCommands {
     }
 
     private static CompletableFuture<Suggestions> getSuggestions(SuggestionsBuilder builder) {
-        String remaining = builder.getRemaining().toLowerCase();
-        
+        //String remaining = builder.getRemaining().toLowerCase();
         // for (String key : Config.getInst().screenConfigs.keySet()) {
         //     if (key.toLowerCase().startsWith(remaining)) {
         //         builder.suggest(key);

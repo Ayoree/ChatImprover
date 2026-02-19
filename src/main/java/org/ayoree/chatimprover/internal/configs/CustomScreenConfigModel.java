@@ -19,16 +19,16 @@
 
 package org.ayoree.chatimprover.internal.configs;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+
+import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigEntry;
 
 import io.wispforest.owo.config.annotation.Config;
 
 import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
 
-@Config(name = MOD_ID + "/chatimprover-config", wrapperName = "ChatimproverConfig")
-public class ConfigModel {
-    public boolean isBlockTrash = true;
-    public boolean isImproveMessages = true;
-    public Set<String> disabledAddons = new HashSet<>();
+@Config(name = MOD_ID + "/custom-screen-config", wrapperName = "CustomScreenConfig")
+public class CustomScreenConfigModel {
+    public String title;
+    public List<CustomScreenConfigEntry> entries;
 }

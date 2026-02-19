@@ -3,7 +3,10 @@
 	"package": "org.ayoree.chatimprover.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ChatHudAccessor"
+		"ChatHudAccessor",
+		"BaseParentComponentInvoker",
+		"FlowLayoutAccessor",
+		"FlowLayoutMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

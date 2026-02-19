@@ -23,6 +23,7 @@ import net.fabricmc.api.ModInitializer;
 
 import org.ayoree.chatimprover.internal.CustomCommands;
 import org.ayoree.chatimprover.internal.configs.ChatimproverConfig;
+import org.ayoree.chatimprover.internal.configs.CustomScreenConfig;
 import org.ayoree.chatimprover.internal.handlers.AttackHandler;
 import org.ayoree.chatimprover.internal.handlers.ChatHandler;
 import org.ayoree.chatimprover.internal.handlers.ConnectionHandler;
@@ -33,6 +34,7 @@ public class ChatImprover implements ModInitializer {
 	public static final String MOD_ID = "chatimprover";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static ChatimproverConfig CONFIG = ChatimproverConfig.createAndLoad();
+	public static CustomScreenConfig CONFIG_CUSTOM_SCREEN = CustomScreenConfig.createAndLoad();
 
 	@Override
 	public void onInitialize() {

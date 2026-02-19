@@ -83,7 +83,7 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
             final boolean val = opt.value();
             m_boolSettings.put(key, val);
             checkbox.checked(val);
-            checkbox.onChanged(value -> booleanChanged(key, value));
+            checkbox.onChanged(value -> onBooleanChanged(key, value));
         }
 
         rootComponent.childById(ButtonComponent.class, ID_BTN_CLOSE)
@@ -108,7 +108,7 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
             CheckboxComponent checkbox = Components.checkbox(Text.of(addonName));
             if (!m_disabledAddons.contains(addonId))
                 checkbox.checked(true);
-            checkbox.onChanged(value -> addonChanged(addonId, value));
+            checkbox.onChanged(value -> onAddonChanged(addonId, value));
             container.child(checkbox);
         }
     }
@@ -123,12 +123,12 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
         btn.active(false);
     }
 
-    void booleanChanged(final Option.Key key, final boolean value) {
+    void onBooleanChanged(final Option.Key key, final boolean value) {
         m_boolSettings.put(key, value);
         m_btnSave.active(wasConfigChanged());
     };
 
-    void addonChanged(final String addon, final boolean value) {
+    void onAddonChanged(final String addon, final boolean value) {
         if (value)
             m_disabledAddons.remove(addon);
         else

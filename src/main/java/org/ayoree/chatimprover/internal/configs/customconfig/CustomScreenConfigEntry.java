@@ -17,18 +17,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal.configs;
+package org.ayoree.chatimprover.internal.configs.customconfig;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import io.wispforest.owo.config.annotation.Config;
+public class CustomScreenConfigEntry{
+    private String m_title;
+    private List<String> m_commands;
 
-import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
+    public CustomScreenConfigEntry(final String title, final List<String> commands) {
+        m_title = title;
+        m_commands = commands;
+    }
 
-@Config(name = MOD_ID + "/chatimprover-config", wrapperName = "ChatimproverConfig")
-public class ConfigModel {
-    public boolean isBlockTrash = true;
-    public boolean isImproveMessages = true;
-    public Set<String> disabledAddons = new HashSet<>();
+    public String title() { return m_title; }
+    public void title(final String title) { m_title = title; }
+
+    public List<String> commands() { return m_commands; }
+    public void commands(final List<String> commands) { m_commands = commands; }
 }

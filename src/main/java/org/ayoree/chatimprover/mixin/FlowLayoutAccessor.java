@@ -17,18 +17,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal.configs;
+package org.ayoree.chatimprover.mixin;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import io.wispforest.owo.config.annotation.Config;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
+import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.Component;
 
-@Config(name = MOD_ID + "/chatimprover-config", wrapperName = "ChatimproverConfig")
-public class ConfigModel {
-    public boolean isBlockTrash = true;
-    public boolean isImproveMessages = true;
-    public Set<String> disabledAddons = new HashSet<>();
+@Mixin(FlowLayout.class)
+public interface FlowLayoutAccessor {
+    @Accessor("children")
+    List<Component> getChildrens();
 }

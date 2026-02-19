@@ -17,17 +17,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal.configs.customconfig.helpers;
+package org.ayoree.chatimprover.mixin;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
+import io.wispforest.owo.ui.base.BaseParentComponent;
 
-public class CustomConfigEntry{
-    public final String title;
-    public List<String> commands = new ArrayList<>();
-
-    public CustomConfigEntry(final String title, final ArrayList<String> commands) {
-        this.title = title;
-        this.commands = commands;
-    }
+@Mixin(BaseParentComponent.class)
+public interface BaseParentComponentInvoker {
+    @Invoker(value = "updateLayout", remap = false)
+    void invokeUpdateLayout();
 }

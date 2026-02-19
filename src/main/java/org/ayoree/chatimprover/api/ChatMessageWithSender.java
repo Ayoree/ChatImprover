@@ -17,18 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal.configs;
+package org.ayoree.chatimprover.api;
 
-import java.util.HashSet;
-import java.util.Set;
+abstract public class ChatMessageWithSender {
+    protected String m_senderNick;
 
-import io.wispforest.owo.config.annotation.Config;
-
-import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
-
-@Config(name = MOD_ID + "/chatimprover-config", wrapperName = "ChatimproverConfig")
-public class ConfigModel {
-    public boolean isBlockTrash = true;
-    public boolean isImproveMessages = true;
-    public Set<String> disabledAddons = new HashSet<>();
+    public String getSenderNick() { return m_senderNick; }
 }
