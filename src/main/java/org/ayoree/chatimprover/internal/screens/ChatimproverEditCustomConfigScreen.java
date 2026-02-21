@@ -23,9 +23,13 @@ import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
+import io.wispforest.owo.ui.container.CollapsibleContainer;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.HorizontalAlignment;
+import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -35,10 +39,13 @@ import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.ayoree.chatimprover.internal.FlowLayoutOperations;
-import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigEntry;
+import org.ayoree.chatimprover.api.mixin.FlowLayoutOperations;
+import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigCategory;
+import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigCommand;
 
 public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLayout> {
     private static final String ID_BTN_CLOSE = "btn_close";
@@ -48,10 +55,11 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
     
     private final Screen m_parent;
     private String m_title = CONFIG_CUSTOM_SCREEN.title();
-    private List<CustomScreenConfigEntry> m_entires = new ArrayList<CustomScreenConfigEntry>();
+    private List<CustomScreenConfigCategory> m_entires = new ArrayList<>(CONFIG_CUSTOM_SCREEN.entries());
     private ButtonComponent m_btnSave;
 
-    private List<Elem> m_elems = new ArrayList<>();
+    private List<Elem<CustomScreenConfigCategory>> m_configCategories = new ArrayList<>();
+    private Map<Elem<CustomScreenConfigCategory>, List<Elem<CustomScreenConfigCommand>>> m_categoryCommands = new HashMap<>();
 
     public ChatimproverEditCustomConfigScreen(Screen parent) {
         super(FlowLayout.class, DataSource.asset(Identifier.of(MOD_ID, "custom_config_screen_ui")));
@@ -65,22 +73,21 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
 
     @Override
     protected void build(FlowLayout rootComponent) {
-        if (CONFIG_CUSTOM_SCREEN.entries() != null)
-            m_entires = new ArrayList<>(CONFIG_CUSTOM_SCREEN.entries());
-
         final FlowLayout container = rootComponent.childById(FlowLayout.class, ID_CONTAINER);
         m_btnSave = rootComponent.childById(ButtonComponent.class, ID_BTN_SAVE);
         m_btnSave.active(false);
         m_btnSave.onPress(btn -> { save(btn); });
 
-        TextBoxComponent titleBox = Components.textBox(Sizing.fill(), m_title);
+        final TextBoxComponent titleBox = Components.textBox(Sizing.fill(), m_title);
         titleBox.setPlaceholder(Text.literal("Заголовок"));
-        titleBox.tooltip(Text.of("Показывается сверху экрана"));
-        titleBox.onChanged().subscribe(newTitle -> m_title = newTitle);
+        titleBox.onChanged().subscribe(newTitle -> {
+            m_title = newTitle;
+            m_btnSave.active(wasConfigChanged());
+        });
         container.child(titleBox);
 
-        for (final CustomScreenConfigEntry entry : m_entires) {
-            addEntry(container, entry);
+        for (final CustomScreenConfigCategory entry : m_entires) {
+            addCategory(container, entry);
         }
 
         rootComponent.childById(ButtonComponent.class, ID_BTN_CLOSE)
@@ -88,9 +95,10 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
 
         rootComponent.childById(ButtonComponent.class, ID_BTN_ADD)
             .onPress(btn -> {
-                final CustomScreenConfigEntry configEntry = new CustomScreenConfigEntry("Новая категория", new ArrayList<>());
-                m_entires.add(configEntry);
-                addEntry(container, configEntry);
+                final CustomScreenConfigCategory configCategory = new CustomScreenConfigCategory();
+                m_entires.add(configCategory);
+                addCategory(container, configCategory);
+                m_btnSave.active(wasConfigChanged());
             });
     }
 
@@ -101,85 +109,220 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
         btn.active(false);
     }
 
-    private void addEntry(final FlowLayout container, final CustomScreenConfigEntry configEntry) {
-        final FlowLayout flow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
+    private boolean wasConfigChanged() {
+        return true; // why not?
+    }
+
+    private void addCategory(final FlowLayout container, final CustomScreenConfigCategory configCategory) {
+        final FlowLayout vertFlow = Containers.verticalFlow(Sizing.fill(), Sizing.content());
+        final FlowLayout horFlow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
         final ButtonComponent btnUp = Components.button(Text.literal("↑"), null);
         final ButtonComponent btnDown = Components.button(Text.literal("↓"), null);
         final TextBoxComponent textBox = Components.textBox(Sizing.expand());
         final ButtonComponent btnRemove = Components.button(Text.literal("✖"), null);
-        btnUp.sizing(Sizing.fixed(20));
-        btnDown.sizing(Sizing.fixed(20));
-        btnRemove.sizing(Sizing.fixed(20));
+        final CollapsibleContainer collapsible = Containers.collapsible(Sizing.fill(), Sizing.content(), Text.literal("Команды"), false);
+        final ButtonComponent btnAddCommand = Components.button(Text.literal("Добавить"), null);
+        final FlowLayout commandsContainer = Containers.verticalFlow(Sizing.fill(), Sizing.content());
+        final FlowLayout afterCommandsContainer = Containers.verticalFlow(Sizing.fill(), Sizing.content());
+        vertFlow.margins(Insets.top(8));
+        horFlow.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+        textBox.setPlaceholder(Text.literal("Название категории"));
+        textBox.text(configCategory.name());
+        btnUp.sizing(Sizing.fixed(22));
+        btnDown.sizing(Sizing.fixed(22));
+        btnRemove.sizing(Sizing.fixed(22));
+        btnRemove.tooltip(Text.literal("Удалить категорию"));
+        collapsible.margins(Insets.left(44));
+        afterCommandsContainer.alignment(HorizontalAlignment.LEFT, VerticalAlignment.TOP);
         
-        final Elem prevElem = m_elems.isEmpty() ? null : m_elems.getLast();
-        final Elem thisElem = new Elem(configEntry, flow, btnUp, btnDown, textBox, btnRemove, prevElem, null);
-        if (prevElem != null)
-            prevElem.next(thisElem);
-        System.out.println("thisElem: " + thisElem);
-        System.out.println("prevElem: " + prevElem);
-
-        btnUp.onPress(btn -> onPressUp(thisElem));
-        btnDown.onPress(btn -> onPressDown(thisElem));
-        btnRemove.onPress(btn -> onRemove(thisElem));
-
-        flow.child(btnUp);
-        flow.child(btnDown);
-        flow.child(textBox);
-        flow.child(btnRemove);
-        container.child(flow);
+        final List<CustomScreenConfigCommand> commands = configCategory.commands();
+        final Elem<CustomScreenConfigCategory> prevConfigCategory = m_configCategories.isEmpty() ? null : m_configCategories.getLast();
+        final Elem<CustomScreenConfigCategory> thisConfigCategory = new Elem<>(configCategory, vertFlow, btnUp, btnDown, prevConfigCategory, null);
+        m_configCategories.add(thisConfigCategory);
+        m_categoryCommands.put(thisConfigCategory, new ArrayList<>());
         
-        updateButtons(thisElem);
-        updateButtons(prevElem);
+        if (prevConfigCategory != null)
+            prevConfigCategory.next(thisConfigCategory);
 
-        m_elems.add(thisElem);
+        btnUp.onPress(btn -> onPressUp(thisConfigCategory));
+        btnDown.onPress(btn -> onPressDown(thisConfigCategory));
+        btnRemove.onPress(btn -> onRemove(thisConfigCategory));
+        textBox.onChanged().subscribe(newVal -> {
+            configCategory.name(newVal);
+            m_btnSave.active(wasConfigChanged());
+        });
+        btnAddCommand.onPress(btn -> {
+            final CustomScreenConfigCommand cmd = new CustomScreenConfigCommand();
+            thisConfigCategory.val().commands().add(cmd);
+            addCommand(commandsContainer, thisConfigCategory, cmd);
+            m_btnSave.active(wasConfigChanged());
+        });
+        btnAddCommand.tooltip(Text.literal("Добавить команду"));
+
+        for (final CustomScreenConfigCommand command : commands) {
+            addCommand(commandsContainer, thisConfigCategory, command);
+        }
+
+        afterCommandsContainer.child(btnAddCommand);
+
+        horFlow.child(btnUp);
+        horFlow.child(btnDown);
+        horFlow.child(textBox);
+        horFlow.child(btnRemove);
+        vertFlow.child(horFlow);
+
+        collapsible.child(commandsContainer);
+        collapsible.child(afterCommandsContainer);
+        vertFlow.child(collapsible);
+
+        container.child(vertFlow);
+        
+        updateButtons(thisConfigCategory);
+        updateButtons(prevConfigCategory);
     }
 
-    private void onPressUp(final Elem thisElem) {
-        final Elem prevElem = thisElem.prev();
-        Collections.swap(m_elems, m_elems.indexOf(thisElem), m_elems.indexOf(prevElem));
-        Collections.swap(m_entires, m_entires.indexOf(thisElem.configEntry()), m_entires.indexOf(prevElem.configEntry()));
+    private void addCommand(final FlowLayout container, final Elem<CustomScreenConfigCategory> thisConfigCategory, final CustomScreenConfigCommand command) {
+        final List<Elem<CustomScreenConfigCommand>> commands = m_categoryCommands.get(thisConfigCategory);
+        final FlowLayout horFlow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
+        final ButtonComponent btnUp = Components.button(Text.literal("↑"), null);
+        final ButtonComponent btnDown = Components.button(Text.literal("↓"), null);
+        final TextBoxComponent nameTextBox = Components.textBox(Sizing.fixed(60));
+        final TextBoxComponent commandTextBox = Components.textBox(Sizing.expand());
+        final ButtonComponent btnRemove = Components.button(Text.literal("✖"), null);
+        horFlow.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+        nameTextBox.setPlaceholder(Text.literal("Название"));
+        nameTextBox.text(command.name());
+        commandTextBox.setPlaceholder(Text.literal("Команда"));
+        commandTextBox.text(command.command());
+        btnUp.sizing(Sizing.fixed(22));
+        btnDown.sizing(Sizing.fixed(22));
+        btnRemove.sizing(Sizing.fixed(22));
+        btnRemove.tooltip(Text.literal("Удалить команду"));
+        
+        final Elem<CustomScreenConfigCommand> prevCommand = commands.isEmpty() ? null : commands.getLast();
+        final Elem<CustomScreenConfigCommand> thisCommand = new Elem<>(command, horFlow, btnUp, btnDown, prevCommand, null);
+        commands.add(thisCommand);
 
-        if (prevElem.prev() != null)
-            prevElem.prev().next(thisElem);
-        prevElem.next(thisElem.next());
-        thisElem.prev(prevElem.prev());
-        if (thisElem.next() != null)
-            thisElem.next().prev(prevElem);
-        thisElem.next(prevElem);
-        prevElem.prev(thisElem);
+        if (prevCommand != null)
+            prevCommand.next(thisCommand);
 
-        final FlowLayout globalContainer = (FlowLayout)thisElem.container().parent();
-        ((FlowLayoutOperations) globalContainer).swapChilds(thisElem.container(), prevElem.container());
+        btnUp.onPress(btn -> onPressUp(thisConfigCategory, thisCommand));
+        btnDown.onPress(btn -> onPressDown(thisConfigCategory, thisCommand));
+        btnRemove.onPress(btn -> onRemove(thisConfigCategory, thisCommand));
+        nameTextBox.onChanged().subscribe(newVal -> {
+            thisCommand.val().name(newVal);
+            m_btnSave.active(wasConfigChanged());
+        });
+        commandTextBox.onChanged().subscribe(newVal -> {
+            thisCommand.val().command(newVal);
+            m_btnSave.active(wasConfigChanged());
+        });
 
-        updateButtons(thisElem);
-        updateButtons(prevElem);
+        horFlow.child(btnUp);
+        horFlow.child(btnDown);
+        horFlow.child(nameTextBox);
+        horFlow.child(commandTextBox);
+        horFlow.child(btnRemove);
+        container.child(horFlow);
+        
+        updateButtons(thisCommand);
+        updateButtons(prevCommand);
     }
 
-    private void onPressDown(final Elem thisElem) {
-        final Elem nextElem = thisElem.next();
-        Collections.swap(m_elems, m_elems.indexOf(thisElem), m_elems.indexOf(nextElem));
-        Collections.swap(m_entires, m_entires.indexOf(thisElem.configEntry()), m_entires.indexOf(nextElem.configEntry()));
+    private void onPressUp(final Elem<CustomScreenConfigCategory> thisConfigCategory) {
+        final Elem<CustomScreenConfigCategory> prevConfigCategory = thisConfigCategory.prev();
+        Collections.swap(m_configCategories, m_configCategories.indexOf(thisConfigCategory), m_configCategories.indexOf(prevConfigCategory));
+        Collections.swap(m_entires, m_entires.indexOf(thisConfigCategory.val()), m_entires.indexOf(prevConfigCategory.val()));
 
-        if (nextElem.next() != null)
-            nextElem.next().prev(thisElem);
-        nextElem.prev(thisElem.prev());
-        thisElem.next(nextElem.next());
-        if (thisElem.prev() != null)
-            thisElem.prev().next(nextElem);
-        thisElem.prev(nextElem);
-        nextElem.next(thisElem);
-
-        final FlowLayout globalContainer = (FlowLayout)thisElem.container().parent();
-        ((FlowLayoutOperations) globalContainer).swapChilds(thisElem.container(), nextElem.container());
-
-        updateButtons(thisElem);
-        updateButtons(nextElem);
+        swapElems(thisConfigCategory, prevConfigCategory);
     }
 
-    private void onRemove(final Elem elem) {
-        m_elems.remove(elem);
-        m_entires.remove(elem.configEntry());
+    private void onPressUp(final Elem<CustomScreenConfigCategory> thisConfigCategory, final Elem<CustomScreenConfigCommand> thisCommand) {
+        final List<Elem<CustomScreenConfigCommand>> thisCommands = m_categoryCommands.get(thisConfigCategory);
+        final List<CustomScreenConfigCommand> realCommands = thisConfigCategory.val().commands();
+        
+        final Elem<CustomScreenConfigCommand> prevCommand = thisCommand.prev();
+        Collections.swap(thisCommands, thisCommands.indexOf(thisCommand), thisCommands.indexOf(prevCommand));
+        Collections.swap(realCommands, realCommands.indexOf(thisCommand.val()), realCommands.indexOf(prevCommand.val()));
 
+        swapElems(thisCommand, prevCommand);
+    }
+    
+    private void onPressDown(final Elem<CustomScreenConfigCategory> thisConfigCategory) {
+        final Elem<CustomScreenConfigCategory> nextConfigCategory = thisConfigCategory.next();
+        Collections.swap(m_configCategories, m_configCategories.indexOf(thisConfigCategory), m_configCategories.indexOf(nextConfigCategory));
+        Collections.swap(m_entires, m_entires.indexOf(thisConfigCategory.val()), m_entires.indexOf(nextConfigCategory.val()));
+        
+        swapElems(thisConfigCategory, nextConfigCategory);
+    }
+    
+    private void onPressDown(final Elem<CustomScreenConfigCategory> thisConfigCategory, final Elem<CustomScreenConfigCommand> thisCommand) {
+        final List<Elem<CustomScreenConfigCommand>> thisCommands = m_categoryCommands.get(thisConfigCategory);
+        final List<CustomScreenConfigCommand> realCommands = thisConfigCategory.val().commands();
+
+        final Elem<CustomScreenConfigCommand> nextCommand = thisCommand.next();
+        Collections.swap(thisCommands, thisCommands.indexOf(thisCommand), thisCommands.indexOf(nextCommand));
+        Collections.swap(realCommands, realCommands.indexOf(thisCommand.val()), realCommands.indexOf(nextCommand.val()));
+
+        swapElems(thisCommand, nextCommand);
+    }
+
+    private void onRemove(final Elem<CustomScreenConfigCategory> thisConfigCategory) {
+        m_configCategories.remove(thisConfigCategory);
+        m_categoryCommands.remove(thisConfigCategory);
+        m_entires.remove(thisConfigCategory.val());
+
+        removeElem(thisConfigCategory);
+    }
+
+    private void onRemove(final Elem<CustomScreenConfigCategory> thisConfigCategory, Elem<CustomScreenConfigCommand> command) {
+        m_categoryCommands.get(thisConfigCategory).remove(command);
+        thisConfigCategory.val().commands().remove(command.val());
+
+        removeElem(command);
+    }
+
+    private <T> void swapElems(final Elem<T> a, final Elem<T> b) {
+
+        final Elem<T> aNext = a.next();
+        final Elem<T> aPrev = a.prev();
+        final Elem<T> bNext = b.next();
+        final Elem<T> bPrev = b.prev();
+
+        if (aNext != null)
+            aNext.prev(b);
+        if (aPrev != null)
+            aPrev.next(b);
+
+        if (bNext != null)
+            bNext.prev(a);
+        if (bPrev != null)
+            bPrev.next(a);
+
+        a.next(bNext);
+        a.prev(bPrev);
+        b.next(aNext);
+        b.prev(aPrev);
+
+        if (a.next() == a)
+            a.next(b);
+        if (a.prev() == a)
+            a.prev(b);
+        if (b.next() == b)
+            b.next(a);
+        if (b.prev() == b)
+            b.prev(a);
+
+        final FlowLayout container = (FlowLayout)a.container().parent();
+        ((FlowLayoutOperations) container).swapChilds(a.container(), b.container());
+
+        updateButtons(a);
+        updateButtons(b);
+
+        m_btnSave.active(wasConfigChanged());
+    }
+
+    private <T> void removeElem(final Elem<T> elem) {
         if (elem.next() != null) {
             elem.next().prev(elem.prev());
             updateButtons(elem.next());
@@ -190,47 +333,43 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
         }
         elem.next(null);
         elem.prev(null);
-        final FlowLayout globalContainer = (FlowLayout)elem.container().parent();
-        globalContainer.removeChild(elem.container());
+        final FlowLayout mainContainer = (FlowLayout)elem.container().parent();
+        mainContainer.removeChild(elem.container());
+
+        m_btnSave.active(wasConfigChanged());
     }
 
-    private void updateButtons(final Elem elem) {
+    private void updateButtons(final Elem<?> elem) {
         if (elem == null)
             return;
         elem.btnUp().active(elem.prev() != null);
         elem.btnDown().active(elem.next() != null);
     }
 
-    private static class Elem {
-        private final CustomScreenConfigEntry m_configEntry;
+    private static class Elem<T> {
+        private final T m_val;
         private final FlowLayout m_container;
         private final ButtonComponent m_btnUp;
         private final ButtonComponent m_btnDown;
-        private final TextBoxComponent m_textBox;
-        private final ButtonComponent m_btnRemove;
-        private Elem m_prev;
-        private Elem m_next;
+        private Elem<T> m_prev;
+        private Elem<T> m_next;
 
-        public Elem(CustomScreenConfigEntry configEntry, FlowLayout container, ButtonComponent btnUp, ButtonComponent btnDown, TextBoxComponent textBox, ButtonComponent btnRemove, Elem prev, Elem next) {
-            m_configEntry = configEntry;
+        Elem(final T val, final FlowLayout container, final ButtonComponent btnUp, final ButtonComponent btnDown, final Elem<T> prev, final Elem<T> next) {
+            m_val = val;
             m_container = container;
             m_btnUp = btnUp;
             m_btnDown = btnDown;
-            m_textBox = textBox;
-            m_btnRemove = btnRemove;
             m_prev = prev;
             m_next = next;
         }
 
-        CustomScreenConfigEntry configEntry() { return m_configEntry; }
-        FlowLayout container() { return m_container; }
-        ButtonComponent btnUp() { return m_btnUp; }
-        ButtonComponent btnDown() { return m_btnDown; }
-        TextBoxComponent textBox() { return m_textBox; }
-        ButtonComponent btnRemove() { return m_btnRemove; }
-        Elem prev() { return m_prev; }
-        void prev(Elem elem) { m_prev = elem; }
-        Elem next() { return m_next; }
-        void next(Elem elem) { m_next = elem; }
-    };
+        final T val() { return m_val; }
+        final FlowLayout container() { return m_container; }
+        final ButtonComponent btnUp() { return m_btnUp; }
+        final ButtonComponent btnDown() { return m_btnDown; }
+        final Elem<T> prev() { return m_prev; }
+        final void prev(final Elem<T> configCategory) { m_prev = configCategory; }
+        final Elem<T> next() { return m_next; }
+        final void next(final Elem<T> configCategory) { m_next = configCategory; }
+    }
 }

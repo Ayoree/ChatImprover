@@ -17,19 +17,31 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal.configs;
+package org.ayoree.chatimprover.internal.configs.customconfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigCategory;
+public class CustomScreenConfigCategory{
+    private String m_name = "";
+    private List<CustomScreenConfigCommand> m_commands = new ArrayList<>();
 
-import io.wispforest.owo.config.annotation.Config;
+    public CustomScreenConfigCategory() {
+        this("");
+    }
 
-import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
+    public CustomScreenConfigCategory(final String name) {
+        this(name, new ArrayList<>());
+    }
 
-@Config(name = MOD_ID + "/custom-screen-config", wrapperName = "CustomScreenConfig")
-public class CustomScreenConfigModel {
-    public String title = "";
-    public List<CustomScreenConfigCategory> entries = new ArrayList<>();
+    public CustomScreenConfigCategory(final String name, final List<CustomScreenConfigCommand> commands) {
+        m_name = name;
+        m_commands = commands;
+    }
+
+    public String name() { return m_name; }
+    public void name(final String name) { m_name = name; }
+
+    public List<CustomScreenConfigCommand> commands() { return m_commands; }
+    public void commands(final List<CustomScreenConfigCommand> commands) { m_commands = commands; }
 }

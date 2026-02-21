@@ -56,7 +56,7 @@
                         <vertical method="fill">80</vertical>
                     </sizing>
                     <surface>
-                        <blur quality="4" size="8"/>
+                        <blur quality="4" size="6"/>
                         <outline>white</outline>
                     </surface>
                 </flow-layout>
@@ -97,7 +97,7 @@
             <vertical-alignment>center</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
             <surface>
-                <blur quality="4" size="8"/>
+                <blur quality="4" size="6"/>
                 <vanilla-translucent/>
             </surface>
         </flow-layout>

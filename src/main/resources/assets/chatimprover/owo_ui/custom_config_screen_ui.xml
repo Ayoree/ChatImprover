@@ -17,35 +17,50 @@
                     </sizing>
                 </flow-layout>
 
-                <flow-layout direction="vertical">
-                    <children>
-                        <flow-layout direction="vertical" id="container">
-                            <children/>
-                            <horizontal-alignment>center</horizontal-alignment>
-                            <vertical-alignment>center</vertical-alignment>
-                            <sizing>
-                                <horizontal method="fill">60</horizontal>
-                            </sizing>
-                        </flow-layout>
-                        <button id="btn_add_more">
-                            <text>Добавить</text>
-                        </button>
-                    </children>
-                    <horizontal-alignment>center</horizontal-alignment>
-                    <vertical-alignment>top</vertical-alignment>
-                    <padding>
-                        <top>20</top>
-                        <bottom>20</bottom>
-                    </padding>
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <flow-layout direction="vertical" id="container">
+                                <children/>
+                                <horizontal-alignment>center</horizontal-alignment>
+                                <vertical-alignment>center</vertical-alignment>
+                                <sizing>
+                                    <horizontal method="fill">60</horizontal>
+                                </sizing>
+                            </flow-layout>
+                            <button id="btn_add_more">
+                                <text>Добавить</text>
+                                <tooltip-text>Добавить новую категорию</tooltip-text>
+                                <margins>
+                                    <top>8</top>
+                                </margins>
+                            </button>
+                        </children>
+                        <horizontal-alignment>center</horizontal-alignment>
+                        <vertical-alignment>top</vertical-alignment>
+                        <padding>
+                            <top>20</top>
+                            <bottom>20</bottom>
+                        </padding>
+                        <sizing>
+                            <horizontal method="fill">110</horizontal>
+                        </sizing>
+                        <surface>
+                            <blur quality="4" size="6"/>
+                        </surface>
+                    </flow-layout>
+
                     <sizing>
-                        <horizontal method="fill">105</horizontal>
+                        <horizontal method="fill">100</horizontal>
                         <vertical method="fill">80</vertical>
                     </sizing>
-                    <surface>
-                        <blur quality="4" size="8"/>
-                        <outline>white</outline>
-                    </surface>
-                </flow-layout>
+                    <scrollbar>
+                        <vanilla-flat/>
+                    </scrollbar>
+                    <scrollbar-thiccness>
+                        14
+                    </scrollbar-thiccness>
+                </scroll>
 
                 <flow-layout direction="horizontal">
                     <children>
@@ -83,7 +98,7 @@
             <vertical-alignment>center</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
             <surface>
-                <blur quality="4" size="8"/>
+                <blur quality="4" size="6"/>
                 <vanilla-translucent/>
             </surface>
         </flow-layout>

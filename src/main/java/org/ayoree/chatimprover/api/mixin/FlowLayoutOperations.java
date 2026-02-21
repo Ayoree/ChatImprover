@@ -17,22 +17,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayoree.chatimprover.internal.configs.customconfig;
+package org.ayoree.chatimprover.api.mixin;
 
-import java.util.List;
+import io.wispforest.owo.ui.core.Component;
 
-public class CustomScreenConfigEntry{
-    private String m_title;
-    private List<String> m_commands;
-
-    public CustomScreenConfigEntry(final String title, final List<String> commands) {
-        m_title = title;
-        m_commands = commands;
-    }
-
-    public String title() { return m_title; }
-    public void title(final String title) { m_title = title; }
-
-    public List<String> commands() { return m_commands; }
-    public void commands(final List<String> commands) { m_commands = commands; }
+public interface FlowLayoutOperations {
+    /**
+     * Swaps two child components in the FlowLayout
+     * @param a first component to swap
+     * @param b second component to swap
+     */
+    void swapChilds(Component a, Component b);
 }

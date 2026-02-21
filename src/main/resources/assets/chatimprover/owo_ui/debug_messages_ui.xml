@@ -30,7 +30,7 @@
                     <horizontal-alignment>center</horizontal-alignment>
                     <vertical-alignment>center</vertical-alignment>
                     <surface>
-                        <blur quality="4" size="8"/>
+                        <blur quality="4" size="6"/>
                         <outline>white</outline>
                     </surface>
                     <sizing>
@@ -45,7 +45,7 @@
                     </padding>
 
                     <scrollbar>
-                        <vanilla/>
+                        <vanilla-flat/>
                     </scrollbar>
                     <scrollbar-thiccness>
                         14
@@ -55,7 +55,7 @@
             <vertical-alignment>center</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
             <surface>
-                <blur quality="4" size="8"/>
+                <blur quality="4" size="6"/>
                 <vanilla-translucent/>
             </surface>
         </flow-layout>

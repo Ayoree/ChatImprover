@@ -22,5 +22,6 @@ package org.ayoree.chatimprover.api;
 abstract public class ChatMessageWithReceiver {
     protected String m_receiverNick;
 
+    protected void setReceiverNick(final String nick) { m_receiverNick = nick; }
     public String getReceiverNick() { return m_receiverNick; }
 }
