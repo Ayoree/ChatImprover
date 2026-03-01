@@ -43,7 +43,7 @@
                             <bottom>20</bottom>
                         </padding>
                         <sizing>
-                            <horizontal method="fill">110</horizontal>
+                            <horizontal method="fill">100</horizontal>
                         </sizing>
                         <surface>
                             <blur quality="4" size="6"/>

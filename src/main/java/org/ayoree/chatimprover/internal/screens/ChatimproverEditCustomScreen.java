@@ -47,7 +47,7 @@ import org.ayoree.chatimprover.api.mixin.FlowLayoutOperations;
 import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigCategory;
 import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigCommand;
 
-public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLayout> {
+public class ChatimproverEditCustomScreen extends BaseUIModelScreen<FlowLayout> {
     private static final String ID_BTN_CLOSE = "btn_close";
     private static final String ID_BTN_SAVE = "btn_save";
     private static final String ID_BTN_ADD = "btn_add_more";
@@ -61,8 +61,8 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
     private List<Elem<CustomScreenConfigCategory>> m_configCategories = new ArrayList<>();
     private Map<Elem<CustomScreenConfigCategory>, List<Elem<CustomScreenConfigCommand>>> m_categoryCommands = new HashMap<>();
 
-    public ChatimproverEditCustomConfigScreen(Screen parent) {
-        super(FlowLayout.class, DataSource.asset(Identifier.of(MOD_ID, "custom_config_screen_ui")));
+    public ChatimproverEditCustomScreen(Screen parent) {
+        super(FlowLayout.class, DataSource.asset(Identifier.of(MOD_ID, "custom_screen_config_ui")));
         m_parent = parent;
     }
 
@@ -79,7 +79,7 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
         m_btnSave.onPress(btn -> { save(btn); });
 
         final TextBoxComponent titleBox = Components.textBox(Sizing.fill(), m_title);
-        titleBox.setPlaceholder(Text.literal("Заголовок"));
+        titleBox.setPlaceholder(Text.of("Заголовок"));
         titleBox.onChanged().subscribe(newTitle -> {
             m_title = newTitle;
             m_btnSave.active(wasConfigChanged());
@@ -116,22 +116,22 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
     private void addCategory(final FlowLayout container, final CustomScreenConfigCategory configCategory) {
         final FlowLayout vertFlow = Containers.verticalFlow(Sizing.fill(), Sizing.content());
         final FlowLayout horFlow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
-        final ButtonComponent btnUp = Components.button(Text.literal("↑"), null);
-        final ButtonComponent btnDown = Components.button(Text.literal("↓"), null);
+        final ButtonComponent btnUp = Components.button(Text.of("↑"), null);
+        final ButtonComponent btnDown = Components.button(Text.of("↓"), null);
         final TextBoxComponent textBox = Components.textBox(Sizing.expand());
-        final ButtonComponent btnRemove = Components.button(Text.literal("✖"), null);
-        final CollapsibleContainer collapsible = Containers.collapsible(Sizing.fill(), Sizing.content(), Text.literal("Команды"), false);
-        final ButtonComponent btnAddCommand = Components.button(Text.literal("Добавить"), null);
+        final ButtonComponent btnRemove = Components.button(Text.of("✖"), null);
+        final CollapsibleContainer collapsible = Containers.collapsible(Sizing.fill(), Sizing.content(), Text.of("Команды"), false);
+        final ButtonComponent btnAddCommand = Components.button(Text.of("Добавить"), null);
         final FlowLayout commandsContainer = Containers.verticalFlow(Sizing.fill(), Sizing.content());
         final FlowLayout afterCommandsContainer = Containers.verticalFlow(Sizing.fill(), Sizing.content());
         vertFlow.margins(Insets.top(8));
         horFlow.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-        textBox.setPlaceholder(Text.literal("Название категории"));
+        textBox.setPlaceholder(Text.of("Название категории"));
         textBox.text(configCategory.name());
         btnUp.sizing(Sizing.fixed(22));
         btnDown.sizing(Sizing.fixed(22));
         btnRemove.sizing(Sizing.fixed(22));
-        btnRemove.tooltip(Text.literal("Удалить категорию"));
+        btnRemove.tooltip(Text.of("Удалить категорию"));
         collapsible.margins(Insets.left(44));
         afterCommandsContainer.alignment(HorizontalAlignment.LEFT, VerticalAlignment.TOP);
         
@@ -157,7 +157,7 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
             addCommand(commandsContainer, thisConfigCategory, cmd);
             m_btnSave.active(wasConfigChanged());
         });
-        btnAddCommand.tooltip(Text.literal("Добавить команду"));
+        btnAddCommand.tooltip(Text.of("Добавить команду"));
 
         for (final CustomScreenConfigCommand command : commands) {
             addCommand(commandsContainer, thisConfigCategory, command);
@@ -184,20 +184,20 @@ public class ChatimproverEditCustomConfigScreen extends BaseUIModelScreen<FlowLa
     private void addCommand(final FlowLayout container, final Elem<CustomScreenConfigCategory> thisConfigCategory, final CustomScreenConfigCommand command) {
         final List<Elem<CustomScreenConfigCommand>> commands = m_categoryCommands.get(thisConfigCategory);
         final FlowLayout horFlow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
-        final ButtonComponent btnUp = Components.button(Text.literal("↑"), null);
-        final ButtonComponent btnDown = Components.button(Text.literal("↓"), null);
+        final ButtonComponent btnUp = Components.button(Text.of("↑"), null);
+        final ButtonComponent btnDown = Components.button(Text.of("↓"), null);
         final TextBoxComponent nameTextBox = Components.textBox(Sizing.fixed(60));
         final TextBoxComponent commandTextBox = Components.textBox(Sizing.expand());
-        final ButtonComponent btnRemove = Components.button(Text.literal("✖"), null);
+        final ButtonComponent btnRemove = Components.button(Text.of("✖"), null);
         horFlow.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-        nameTextBox.setPlaceholder(Text.literal("Название"));
+        nameTextBox.setPlaceholder(Text.of("Название"));
         nameTextBox.text(command.name());
-        commandTextBox.setPlaceholder(Text.literal("Команда"));
+        commandTextBox.setPlaceholder(Text.of("Команда"));
         commandTextBox.text(command.command());
         btnUp.sizing(Sizing.fixed(22));
         btnDown.sizing(Sizing.fixed(22));
         btnRemove.sizing(Sizing.fixed(22));
-        btnRemove.tooltip(Text.literal("Удалить команду"));
+        btnRemove.tooltip(Text.of("Удалить команду"));
         
         final Elem<CustomScreenConfigCommand> prevCommand = commands.isEmpty() ? null : commands.getLast();
         final Elem<CustomScreenConfigCommand> thisCommand = new Elem<>(command, horFlow, btnUp, btnDown, prevCommand, null);

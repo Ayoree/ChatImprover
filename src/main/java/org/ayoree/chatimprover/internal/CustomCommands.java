@@ -22,12 +22,14 @@ package org.ayoree.chatimprover.internal;
 import java.util.concurrent.CompletableFuture;
 
 import org.ayoree.chatimprover.internal.handlers.CommandToScreenHandler;
-import org.ayoree.chatimprover.internal.screens.ChatimproverEditCustomConfigScreen;
+import org.ayoree.chatimprover.internal.screens.ChatimproverCustomScreen;
+import org.ayoree.chatimprover.internal.screens.ChatimproverEditCustomScreen;
 import org.ayoree.chatimprover.internal.screens.LastMessagesScreen;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -55,52 +57,34 @@ public class CustomCommands {
             )
         );
 
-        SuggestionProvider<FabricClientCommandSource> suggestionProvider = (context, builder) -> getSuggestions(builder);
+        SuggestionProvider<FabricClientCommandSource> suggestionProvider = (context, builder) -> getSuggestions(context, builder);
         dispatcher.register(ClientCommandManager
             .literal("ayo")
-                .then(ClientCommandManager
-                    .literal("create")
-                    .then(ClientCommandManager
-                        .argument("configName", StringArgumentType.word())
-                        .executes(context -> {
-                            // String configName = context.getArgument("configName", String.class);
-                            // Config config = Config.getInst();
-                            // if (!config.screenConfigs.containsKey(configName))
-                            //     Config.getInst().createScreenConfig(configName);
-                            // else {
-                            //     context.getSource().sendFeedback(Text.literal("Конфиг с таким названием уже существует"));
-                            // }
-                            return Command.SINGLE_SUCCESS;
-                        })
-                    )
-                )
-                // .then(ClientCommandManager
-                //     .literal("edit")
-                //     .then(ClientCommandManager
-                //         .argument("configName", StringArgumentType.word())
-                //         .suggests(suggestionProvider)
-                //         .executes(context -> {
-                //             // final String configName = context.getArgument("configName", String.class);
-                //             // final HashMap<String, ConfigClassHandler<CustomScreenConfig>> screenConfigs = Config.getInst().screenConfigs;
-                //             // if (!screenConfigs.containsKey(configName))
-                //             //     context.getSource().sendFeedback(Text.literal("Конфига с таким названием нет"));
-                //             // else {
-                //             //     CommandToScreenHandler.openScreen(
-                //             //         client -> EditCustomConfigScreen.createScreen(client.currentScreen, screenConfigs.get(configName))
-                //             //     );
-                //             // }
-                //             return Command.SINGLE_SUCCESS;
-                //         })
-                //     )
-                // )
                 .then(ClientCommandManager
                     .literal("edit")
                     .executes(context -> {
                         CommandToScreenHandler.openScreen(
-                            parentScreen -> new ChatimproverEditCustomConfigScreen(parentScreen)
+                            parentScreen -> new ChatimproverEditCustomScreen(parentScreen)
                         );
                         return Command.SINGLE_SUCCESS;
                     })
+                )
+                .then(ClientCommandManager
+                    .literal("open")
+                    .executes(context -> {
+                        CommandToScreenHandler.openScreen(
+                            parentScreen -> new ChatimproverCustomScreen(parentScreen)
+                        );
+                        return Command.SINGLE_SUCCESS;
+                    })
+                    .then(ClientCommandManager
+                        .argument("data", StringArgumentType.greedyString())
+                        .suggests(suggestionProvider)
+                        .executes(context -> {
+
+                            return Command.SINGLE_SUCCESS;
+                        })
+                    )
                 )
                 .executes(context -> {
                     
@@ -109,13 +93,14 @@ public class CustomCommands {
         );
     }
 
-    private static CompletableFuture<Suggestions> getSuggestions(SuggestionsBuilder builder) {
-        //String remaining = builder.getRemaining().toLowerCase();
-        // for (String key : Config.getInst().screenConfigs.keySet()) {
-        //     if (key.toLowerCase().startsWith(remaining)) {
-        //         builder.suggest(key);
-        //     }
-        // }
+    private static CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
+        String remaining = builder.getRemaining().toLowerCase();
+        context.getSource().getClient().getNetworkHandler().getPlayerList().forEach(player -> {
+            final String nickname = player.getProfile().name();
+            if (nickname.startsWith(remaining)) {
+                builder.suggest(nickname);
+            }
+        });
         
         return builder.buildFuture();
     }

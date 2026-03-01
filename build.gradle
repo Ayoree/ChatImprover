@@ -13,6 +13,9 @@ plugins {
 	id 'maven-publish'
 }
 
+compileJava.options.generatedSourceOutputDirectory = file("${projectDir}/build/generated/sources/annotationProcessor/java/main/org/ayoree/chatimprover/internal/configs")
+sourceSets.main.java.srcDirs += [ 'build/generated/sources/annotationProcessor/java/main' ]
+
 version = project.mod_version
 group = project.maven_group
 
