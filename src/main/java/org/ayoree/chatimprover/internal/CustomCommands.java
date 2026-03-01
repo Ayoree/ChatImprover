@@ -38,6 +38,7 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.text.Text;
 
 public class CustomCommands {
     public static void Init() {
@@ -60,36 +61,38 @@ public class CustomCommands {
         SuggestionProvider<FabricClientCommandSource> suggestionProvider = (context, builder) -> getSuggestions(context, builder);
         dispatcher.register(ClientCommandManager
             .literal("ayo")
-                .then(ClientCommandManager
-                    .literal("edit")
-                    .executes(context -> {
-                        CommandToScreenHandler.openScreen(
-                            parentScreen -> new ChatimproverEditCustomScreen(parentScreen)
-                        );
-                        return Command.SINGLE_SUCCESS;
-                    })
-                )
-                .then(ClientCommandManager
-                    .literal("open")
-                    .executes(context -> {
-                        CommandToScreenHandler.openScreen(
-                            parentScreen -> new ChatimproverCustomScreen(parentScreen)
-                        );
-                        return Command.SINGLE_SUCCESS;
-                    })
-                    .then(ClientCommandManager
-                        .argument("data", StringArgumentType.greedyString())
-                        .suggests(suggestionProvider)
-                        .executes(context -> {
-
-                            return Command.SINGLE_SUCCESS;
-                        })
-                    )
-                )
+            .executes(context -> {
+                context.getSource().sendFeedback(Text.of("Используйте `/ayo edit` для настройки и `/ayo open` для открытия меню"));
+                return Command.SINGLE_SUCCESS;
+            })
+            .then(ClientCommandManager
+                .literal("edit")
                 .executes(context -> {
-                    
+                    CommandToScreenHandler.openScreen(
+                        parentScreen -> new ChatimproverEditCustomScreen(parentScreen)
+                    );
                     return Command.SINGLE_SUCCESS;
                 })
+            )
+            .then(ClientCommandManager
+                .literal("open")
+                .executes(context -> {
+                    CommandToScreenHandler.openScreen(
+                        parentScreen -> new ChatimproverCustomScreen(parentScreen)
+                    );
+                    return Command.SINGLE_SUCCESS;
+                })
+                .then(ClientCommandManager
+                    .argument("input", StringArgumentType.greedyString())
+                    .suggests(suggestionProvider)
+                    .executes(context -> {
+                        CommandToScreenHandler.openScreen(
+                            parentScreen -> new ChatimproverCustomScreen(parentScreen, context.getArgument("input", String.class))
+                        );
+                        return Command.SINGLE_SUCCESS;
+                    })
+                )
+            )
         );
     }
 
@@ -97,11 +100,10 @@ public class CustomCommands {
         String remaining = builder.getRemaining().toLowerCase();
         context.getSource().getClient().getNetworkHandler().getPlayerList().forEach(player -> {
             final String nickname = player.getProfile().name();
-            if (nickname.startsWith(remaining)) {
+            if (nickname.toLowerCase().startsWith(remaining)) {
                 builder.suggest(nickname);
             }
         });
-        
         return builder.buildFuture();
     }
 }

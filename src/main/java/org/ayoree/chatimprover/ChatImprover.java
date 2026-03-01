@@ -24,9 +24,9 @@ import net.fabricmc.api.ModInitializer;
 import org.ayoree.chatimprover.internal.CustomCommands;
 import org.ayoree.chatimprover.internal.configs.ChatimproverConfig;
 import org.ayoree.chatimprover.internal.configs.CustomScreenConfig;
-import org.ayoree.chatimprover.internal.handlers.AttackHandler;
 import org.ayoree.chatimprover.internal.handlers.ChatHandler;
 import org.ayoree.chatimprover.internal.handlers.ConnectionHandler;
+import org.ayoree.chatimprover.internal.handlers.RightClickHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class ChatImprover implements ModInitializer {
 	public void onInitialize() {
 		ChatHandler.init();
 		ConnectionHandler.init();
-		AttackHandler.init();
+		RightClickHandler.init();
 		CustomCommands.Init();
 		LOGGER.info("`%s` mod initialized".formatted(MOD_ID));
 	}

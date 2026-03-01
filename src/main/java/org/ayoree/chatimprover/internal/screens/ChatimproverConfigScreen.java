@@ -24,6 +24,7 @@ import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.CheckboxComponent;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -49,14 +50,16 @@ import org.ayoree.chatimprover.internal.factories.FilterFactory;
 import com.google.common.collect.ImmutableList;
 
 public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
-    private static final String ID_BTN_CLOSE = "btn_close";
-    private static final String ID_BTN_SAVE = "btn_save";
     private static final String ID_CONTAINER = "container";
+    private static final String ID_BTN_SAVE = "btn_save";
+    private static final String ID_BTN_CLOSE = "btn_close";
     @SuppressWarnings("null")
-    private static final ImmutableList<Option.Key> CHECKBOXES_KEYS = ImmutableList.of(CONFIG.keys.isBlockTrash, CONFIG.keys.isImproveMessages);
+    private static final ImmutableList<Option.Key> CHECKBOXES_KEYS = ImmutableList.of(CONFIG.keys.isBlockTrash, CONFIG.keys.isImproveMessages, CONFIG.keys.chatButtons);
+    private static final ImmutableList<Option.Key> STRING_KEYS = ImmutableList.of(CONFIG.keys.senderSymbol, CONFIG.keys.receiverSymbol);
     
     private final Screen m_parent;
     private Map<Option.Key, Boolean> m_boolSettings = new HashMap<>();
+    private Map<Option.Key, String> m_stringSettings = new HashMap<>();
     private Set<String> m_disabledAddons = new HashSet<>(CONFIG.disabledAddons());
     private ButtonComponent m_btnSave;
 
@@ -84,6 +87,15 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
             m_boolSettings.put(key, val);
             checkbox.checked(val);
             checkbox.onChanged(value -> onBooleanChanged(key, value));
+        }
+
+        for (final Option.Key key : STRING_KEYS) {
+            final Option<String> opt = CONFIG.optionForKey(key);
+            final TextBoxComponent textbox = rootComponent.childById(TextBoxComponent.class, key.name());
+            final String val = opt.value();
+            m_stringSettings.put(key, val);
+            textbox.text(val);
+            textbox.onChanged().subscribe(value -> onStringChanged(key, value));
         }
 
         rootComponent.childById(ButtonComponent.class, ID_BTN_CLOSE)
@@ -128,6 +140,11 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
         m_btnSave.active(wasConfigChanged());
     };
 
+    void onStringChanged(final Option.Key key, final String value) {
+        m_stringSettings.put(key, value);
+        m_btnSave.active(wasConfigChanged());
+    };
+
     void onAddonChanged(final String addon, final boolean value) {
         if (value)
             m_disabledAddons.remove(addon);
@@ -140,6 +157,9 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
         return (
             CONFIG.isBlockTrash() != m_boolSettings.get(CONFIG.keys.isBlockTrash) ||
             CONFIG.isImproveMessages() != m_boolSettings.get(CONFIG.keys.isImproveMessages) ||
+            CONFIG.chatButtons() != m_boolSettings.get(CONFIG.keys.chatButtons) ||
+            CONFIG.senderSymbol() != m_stringSettings.get(CONFIG.keys.senderSymbol) ||
+            CONFIG.receiverSymbol() != m_stringSettings.get(CONFIG.keys.receiverSymbol) ||
             !CONFIG.disabledAddons().equals(m_disabledAddons)
         );
     }

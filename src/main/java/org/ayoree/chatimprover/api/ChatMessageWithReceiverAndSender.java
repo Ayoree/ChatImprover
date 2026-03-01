@@ -29,13 +29,16 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
-public class ChatMessageWithReceiver extends ChatMessage implements IChatMessageWithReceiver {
+public class ChatMessageWithReceiverAndSender extends ChatMessage implements IChatMessageWithSender, IChatMessageWithReceiver {
+    private String m_senderNick;
     private String m_receiverNick;
     
-    public ChatMessageWithReceiver(@NotNull final Text msg) {
+    public ChatMessageWithReceiverAndSender(@NotNull final Text msg) {
         super(msg);
     }
 
+    public final void setSenderNick(final String nick) { m_senderNick = nick; }
+    public final String getSenderNick() { return m_senderNick; }
     public final void setReceiverNick(final String nick) { m_receiverNick = nick; }
     public final String getReceiverNick() { return m_receiverNick; }
 
@@ -43,14 +46,21 @@ public class ChatMessageWithReceiver extends ChatMessage implements IChatMessage
     protected Text addExtraStuff(Text msg) {
         return CONFIG.chatButtons() ? Text.empty().append(getSymbol()).append(msg) : super.addExtraStuff(msg);
     }
-
+    
     private MutableText getSymbol() {
-        final MutableText symbol = Text.literal(
+        final MutableText symbol1 = Text.literal(
+            CONFIG.senderSymbol().replace('&', '§'))
+            .setStyle(Style.EMPTY
+                .withClickEvent(new ClickEvent.RunCommand("ayo open " + getSenderNick()))
+                .withHoverEvent(new HoverEvent.ShowText(Text.of("/ayo open " + getSenderNick())))
+            );
+
+        final MutableText symbol2 = Text.literal(
             CONFIG.receiverSymbol().replace('&', '§'))
             .setStyle(Style.EMPTY
                 .withClickEvent(new ClickEvent.RunCommand("ayo open " + getReceiverNick()))
                 .withHoverEvent(new HoverEvent.ShowText(Text.of("/ayo open " + getReceiverNick())))
             );
-        return symbol;
+        return symbol1.append(symbol2);
     }
 }

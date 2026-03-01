@@ -33,7 +33,7 @@ public class CommandToScreenHandler {
         ClientTickEvents.END_CLIENT_TICK.register(CommandToScreenHandler::checkScreens);
     }
 
-    private static void checkScreens(MinecraftClient client) {
+    private static void checkScreens(final MinecraftClient client) {
         if (OPENER != null) {
             client.setScreen(OPENER.apply(client.currentScreen));
             OPENER = null;

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigCategory;
+import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigCommand;
 
 import io.wispforest.owo.config.annotation.Config;
 
@@ -30,6 +31,20 @@ import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
 
 @Config(name = MOD_ID + "/custom-screen-config", wrapperName = "CustomScreenConfig")
 public class CustomScreenConfigModel {
-    public String title = "";
-    public List<CustomScreenConfigCategory> entries = new ArrayList<>();
+    public String title = "Chat Improver";
+    public List<CustomScreenConfigCategory> entries = new ArrayList<>(List.of(
+        new CustomScreenConfigCategory("Пример 1", new ArrayList<>(
+            List.of(
+                new CustomScreenConfigCommand("Выдать флай", "/fly {INPUT} on"),
+                new CustomScreenConfigCommand("Передать привет", "/msg {INPUT} Привет!"),
+                new CustomScreenConfigCommand("Сказать `а`", "а")
+            )
+        )),
+        new CustomScreenConfigCategory("Пример 2", new ArrayList<>(
+            List.of(
+                new CustomScreenConfigCommand("Убрать помеху", "/spawn {INPUT}"),
+                new CustomScreenConfigCommand("Тпхнуть сюда", "/tpohere {INPUT}")
+            )
+        ))
+    ));
 }

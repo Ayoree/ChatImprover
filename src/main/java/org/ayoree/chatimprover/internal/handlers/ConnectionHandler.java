@@ -34,14 +34,14 @@ public class ConnectionHandler {
         ClientPlayConnectionEvents.DISCONNECT.register(ConnectionHandler::onDisconnect);
     }
 
-    private static void onConnect(ClientPlayNetworkHandler networkHandler, PacketSender sender, MinecraftClient client) {
-        ServerInfo server = client.getCurrentServerEntry();
+    private static void onConnect(final ClientPlayNetworkHandler networkHandler, final PacketSender sender, final MinecraftClient client) {
+        final ServerInfo server = client.getCurrentServerEntry();
         ChatMessageFactory.setCurrentServer(server);
         FilterFactory.setCurrentServer(server);
     }
 
-    private static void onDisconnect(ClientPlayNetworkHandler networkHandler, MinecraftClient client) {
-        ServerInfo server = client.getCurrentServerEntry();
+    private static void onDisconnect(final ClientPlayNetworkHandler networkHandler, final MinecraftClient client) {
+        final ServerInfo server = client.getCurrentServerEntry();
         ChatMessageFactory.setCurrentServer(server);
         FilterFactory.setCurrentServer(server);
     }

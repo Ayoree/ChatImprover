@@ -23,6 +23,7 @@ import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -49,11 +50,19 @@ import org.ayoree.chatimprover.internal.configs.customconfig.CustomScreenConfigC
 
 public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
     private static final String ID_CONTAINER = "container";
-    private static final int COLUMNS_MAX_COUNT = 4;
+    private static final String ID_LABEL = "title";
+    private static final String ID_INPUT = "input";
+    private static final int MAX_COLUMNS_COUNT = 4;
     
     private final Screen m_parent;
+    private String m_input = "";
 
-    public ChatimproverCustomScreen(Screen parent) {
+    public ChatimproverCustomScreen(final Screen parent, final String input) {
+        this(parent);
+        m_input = input;
+    }
+
+    public ChatimproverCustomScreen(final Screen parent) {
         super(FlowLayout.class, DataSource.asset(Identifier.of(MOD_ID, "custom_screen_ui")));
         m_parent = parent;
     }
@@ -67,12 +76,19 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
     protected void build(FlowLayout rootComponent) {
         final FlowLayout container = rootComponent.childById(FlowLayout.class, ID_CONTAINER);
         final List<CustomScreenConfigCategory> elems = CONFIG_CUSTOM_SCREEN.entries();
-        final List<FlowLayout> columns = new ArrayList<>(COLUMNS_MAX_COUNT);
+        final List<FlowLayout> columns = new ArrayList<>(MAX_COLUMNS_COUNT);
         final Deque<FlowLayout> elemsWidgets = new ArrayDeque<>();
+        final TextBoxComponent inputBox = rootComponent.childById(TextBoxComponent.class, ID_INPUT);
         
-        for (int i = 0; i < COLUMNS_MAX_COUNT; ++i) {
-            final FlowLayout column = Containers.verticalFlow(Sizing.fill(100 / COLUMNS_MAX_COUNT), Sizing.content());
+        rootComponent.childById(LabelComponent.class, ID_LABEL).text(Text.of(CONFIG_CUSTOM_SCREEN.title()));
+
+        inputBox.text(m_input);
+        inputBox.onChanged().subscribe(newInput -> { m_input = newInput; });
+
+        for (int i = 0; i < MAX_COLUMNS_COUNT; ++i) {
+            final FlowLayout column = Containers.verticalFlow(Sizing.fill(100 / MAX_COLUMNS_COUNT), Sizing.content());
             column.alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
+            column.margins(Insets.horizontal(8));
             columns.add(column);
         }
 
@@ -80,8 +96,8 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
             addElem(elemsWidgets, elem);
         }
 
-        final int elemsInCol = elemsWidgets.size() / COLUMNS_MAX_COUNT;
-        int elemsOverflowCount = elemsWidgets.size() % COLUMNS_MAX_COUNT;
+        final int elemsInCol = elemsWidgets.size() / MAX_COLUMNS_COUNT;
+        int elemsOverflowCount = elemsWidgets.size() % MAX_COLUMNS_COUNT;
 
         for (final FlowLayout col : columns) {
             for (int i = 0; i < elemsInCol; ++i) {
@@ -103,11 +119,12 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
         
         for (final CustomScreenConfigCommand command : commands) {
             ButtonComponent button = Components.button(Text.of(command.name()), btn -> {
+                final String finalCommand = command.command().replace("{INPUT}", m_input);
                 final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-                if (command.command().startsWith("/"))
-                    networkHandler.sendChatCommand(command.command().substring(1));
+                if (finalCommand.startsWith("/"))
+                    networkHandler.sendChatCommand(finalCommand.substring(1));
                 else
-                    networkHandler.sendChatMessage(command.command());
+                    networkHandler.sendChatMessage(finalCommand);
             });
             button.tooltip(Text.of(command.command()));
             commandsWidgets.add(button);
@@ -136,7 +153,7 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
             container.child(buttons.pollFirst());
         }
         
-        final int containerWidth = width / COLUMNS_MAX_COUNT - 40; // bad AF
+        final int containerWidth = width / MAX_COLUMNS_COUNT - 16; // bad AF
         System.out.println("Column width: %s".formatted(containerWidth));
         int childsWidth = 0;
         for (final Component child : childs) {

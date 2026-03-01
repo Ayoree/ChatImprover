@@ -29,6 +29,40 @@
                                     <text>Изменять сообщения</text>
                                     <tooltip-text>Менять сообщения в чате на более удобный вид</tooltip-text>
                                 </checkbox>
+                                <checkbox id="chatButtons">
+                                    <text>Добавлять в чат кнопки для быстрого открытия меню</text>
+                                    <tooltip-text>Добавлять кликабельные кнопки для сообщений, имеющих отправителя и/или получателя</tooltip-text>
+                                </checkbox>
+                                <flow-layout direction="horizontal">
+                                    <children>
+                                        <label>
+                                            <text>Кнопка отправителя:</text>
+                                            <margins><right>12</right></margins>
+                                        </label>
+                                        <text-box id="senderSymbol">
+                                            <text/>
+                                            <tooltip-text>Кнопка для открытия меню с ником отправителя сообщения</tooltip-text>
+                                            <sizing><horizontal method="fixed">64</horizontal></sizing>
+                                        </text-box>
+                                    </children>
+                                    <vertical-alignment>center</vertical-alignment>
+                                    <margins><left>24</left></margins>
+                                </flow-layout>
+                                <flow-layout direction="horizontal">
+                                    <children>
+                                        <label>
+                                            <text>Кнопка получателя:</text>
+                                            <margins><right>12</right></margins>
+                                        </label>
+                                        <text-box id="receiverSymbol">
+                                            <text/>
+                                            <tooltip-text>Кнопка для открытия меню с ником получателя сообщения</tooltip-text>
+                                            <sizing><horizontal method="fixed">64</horizontal></sizing>
+                                        </text-box>
+                                    </children>
+                                    <vertical-alignment>center</vertical-alignment>
+                                    <margins><left>24</left></margins>
+                                </flow-layout>
                                 <label>
                                     <text>Аддоны</text>
                                     <margins>
@@ -40,7 +74,6 @@
                             <horizontal-alignment>left</horizontal-alignment>
                             <vertical-alignment>top</vertical-alignment>
                             <sizing>
-                                <horizontal method="fill">40</horizontal>
                                 <vertical method="fill">100</vertical>
                             </sizing>
                         </flow-layout>
@@ -70,7 +103,7 @@
                                 <right>30</right>
                             </margins>
                             <sizing>
-                                <horizontal method="fill">14</horizontal>
+                                <horizontal method="fixed">96</horizontal>
                                 <vertical method="fixed">28</vertical>
                             </sizing>
                         </button>
@@ -81,7 +114,7 @@
                                 <right>30</right>
                             </margins>
                             <sizing>
-                                <horizontal method="fill">14</horizontal>
+                                <horizontal method="fixed">96</horizontal>
                                 <vertical method="fixed">28</vertical>
                             </sizing>
                         </button>

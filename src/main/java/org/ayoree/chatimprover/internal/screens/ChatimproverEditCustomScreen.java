@@ -194,6 +194,7 @@ public class ChatimproverEditCustomScreen extends BaseUIModelScreen<FlowLayout> 
         nameTextBox.text(command.name());
         commandTextBox.setPlaceholder(Text.of("Команда"));
         commandTextBox.text(command.command());
+        commandTextBox.setMaxLength(2048);
         btnUp.sizing(Sizing.fixed(22));
         btnDown.sizing(Sizing.fixed(22));
         btnRemove.sizing(Sizing.fixed(22));

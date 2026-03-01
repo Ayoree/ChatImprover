@@ -48,7 +48,7 @@ public class ChatMessage {
      * Constructs {@link ChatMessage} object.
      * @param msg original content of the message.
      */
-    public ChatMessage(@NotNull Text msg) {
+    public ChatMessage(@NotNull final Text msg) {
         m_message = msg;
     }
 
@@ -60,6 +60,10 @@ public class ChatMessage {
      */
     public Text getChangedMessage() {
         return m_message;
+    }
+
+    protected Text addExtraStuff(Text msg) {
+        return msg;
     }
 
     /**

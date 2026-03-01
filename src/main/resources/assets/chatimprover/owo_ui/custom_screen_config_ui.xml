@@ -13,7 +13,7 @@
                     <vertical-alignment>center</vertical-alignment>
                     <sizing>
                         <horizontal method="fill">100</horizontal>
-                        <vertical method="fill">10</vertical>
+                        <vertical method="fill">8</vertical>
                     </sizing>
                 </flow-layout>
 
@@ -52,14 +52,10 @@
 
                     <sizing>
                         <horizontal method="fill">100</horizontal>
-                        <vertical method="fill">80</vertical>
+                        <vertical method="fill">84</vertical>
                     </sizing>
-                    <scrollbar>
-                        <vanilla-flat/>
-                    </scrollbar>
-                    <scrollbar-thiccness>
-                        14
-                    </scrollbar-thiccness>
+                    <scrollbar><vanilla-flat/></scrollbar>
+                    <scrollbar-thiccness>8</scrollbar-thiccness>
                 </scroll>
 
                 <flow-layout direction="horizontal">
@@ -71,7 +67,7 @@
                                 <right>30</right>
                             </margins>
                             <sizing>
-                                <horizontal method="fill">14</horizontal>
+                                <horizontal method="fixed">96</horizontal>
                                 <vertical method="fixed">28</vertical>
                             </sizing>
                         </button>
@@ -82,7 +78,7 @@
                                 <right>30</right>
                             </margins>
                             <sizing>
-                                <horizontal method="fill">14</horizontal>
+                                <horizontal method="fixed">96</horizontal>
                                 <vertical method="fixed">28</vertical>
                             </sizing>
                         </button>
@@ -91,7 +87,7 @@
                     <vertical-alignment>center</vertical-alignment>
                     <sizing>
                         <horizontal method="fill">100</horizontal>
-                        <vertical method="fill">10</vertical>
+                        <vertical method="fill">8</vertical>
                     </sizing>
                 </flow-layout>
             </children>

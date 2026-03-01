@@ -3,36 +3,53 @@
     <components>
         <flow-layout direction="vertical">
             <children>
-                <flow-layout direction="vertical">
+                <flow-layout direction="horizontal">
                     <children>
-                        <label id="title"/>
+                        <label id="title">
+                            <margins><horizontal>12</horizontal></margins>
+                        </label>
+                        <text-box id="input">
+                            <tooltip-text>Значение от сюда будет подставляться заместо `{INPUT}` в командах</tooltip-text>
+                            <margins><horizontal>12</horizontal></margins>
+                            <sizing>
+                                <horizontal method="fixed">128</horizontal>
+                            </sizing>
+                        </text-box>
                     </children>
                     <horizontal-alignment>center</horizontal-alignment>
                     <vertical-alignment>center</vertical-alignment>
                     <sizing>
                         <horizontal method="fill">100</horizontal>
-                        <vertical method="fill">10</vertical>
+                        <vertical method="fixed">48</vertical>
                     </sizing>
                 </flow-layout>
 
-                <flow-layout direction="horizontal" id="container">
-                    <children/>
-                    <horizontal-alignment>center</horizontal-alignment>
-                    <vertical-alignment>top</vertical-alignment>
-                    <padding>
-                        <all>20</all>
-                    </padding>
+                <scroll direction="vertical">
+                    <flow-layout direction="horizontal" id="container">
+                        <children/>
+                        <horizontal-alignment>center</horizontal-alignment>
+                        <vertical-alignment>top</vertical-alignment>
+                    </flow-layout>
+                    <positioning type="absolute">0,0</positioning>
                     <sizing>
+                        <vertical method="fill">100</vertical>
                         <horizontal method="fill">100</horizontal>
-                        <vertical method="fill">90</vertical>
                     </sizing>
-                </flow-layout>
+                    <padding>
+                        <vertical>10</vertical>
+                    </padding>
+                    <margins>
+                        <top>48</top>
+                    </margins>
+                    <scrollbar><vanilla-flat/></scrollbar>
+                    <scrollbar-thiccness>8</scrollbar-thiccness>
+                </scroll>
             </children>
             
-            <vertical-alignment>center</vertical-alignment>
+            <vertical-alignment>top</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
             <surface>
-                <blur quality="4" size="6"/>
+                <blur quality="4" size="1"/>
                 <vanilla-translucent/>
             </surface>
         </flow-layout>

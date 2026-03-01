@@ -19,7 +19,8 @@
 
 package org.ayoree.chatimprover.internal.handlers;
 
-import org.ayoree.chatimprover.api.ChatMessage;
+import static org.ayoree.chatimprover.ChatImprover.CONFIG;
+
 import org.ayoree.chatimprover.internal.factories.ChatMessageFactory;
 import org.ayoree.chatimprover.internal.factories.FilterFactory;
 
@@ -32,16 +33,15 @@ public class ChatHandler {
         ClientReceiveMessageEvents.MODIFY_GAME.register(ChatHandler::onMessageReceive);
     }
 
-    private static boolean onAllowMessage(Text message, boolean isOverlay) {
-        // if (!Config.getInst().isBlockTrash)
-        //     return true;
+    private static boolean onAllowMessage(final Text message, final boolean isOverlay) {
+        if (!CONFIG.isBlockTrash())
+            return true;
         return !FilterFactory.testAllFilters(message);
     }
 
-    private static Text onMessageReceive(Text origMessage, boolean overlay) {
-        // if (!Config.getInst().isImproveMessages)
-        //     return origMessage;
-        ChatMessage message = ChatMessageFactory.createChatMessage(origMessage);
-        return message.getChangedMessage();
+    private static Text onMessageReceive(final Text origMessage, final boolean overlay) {
+        if (!CONFIG.isImproveMessages())
+            return origMessage;
+        return ChatMessageFactory.createChatMessage(origMessage).getChangedMessage();
     }
 }

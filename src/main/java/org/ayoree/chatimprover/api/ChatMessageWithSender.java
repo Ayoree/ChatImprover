@@ -19,9 +19,38 @@
 
 package org.ayoree.chatimprover.api;
 
-abstract public class ChatMessageWithSender {
-    protected String m_senderNick;
+import static org.ayoree.chatimprover.ChatImprover.CONFIG;
 
-    protected void setSenderNick(final String nick) { m_senderNick = nick; }
-    public String getSenderNick() { return m_senderNick; }
+import org.jetbrains.annotations.NotNull;
+
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+
+public class ChatMessageWithSender extends ChatMessage implements IChatMessageWithSender {
+    private String m_senderNick;
+    
+    public ChatMessageWithSender(@NotNull Text msg) {
+        super(msg);
+    }
+
+    public final void setSenderNick(final String nick) { m_senderNick = nick; }
+    public final String getSenderNick() { return m_senderNick; }
+
+    @Override
+    protected Text addExtraStuff(Text msg) {
+        return CONFIG.chatButtons() ? Text.empty().append(getSymbol()).append(msg) : super.addExtraStuff(msg);
+    }
+
+    private MutableText getSymbol() {
+        final MutableText symbol = Text.literal(
+            CONFIG.senderSymbol().replace('&', '§'))
+            .setStyle(Style.EMPTY
+                .withClickEvent(new ClickEvent.RunCommand("ayo open " + getSenderNick()))
+                .withHoverEvent(new HoverEvent.ShowText(Text.of("/ayo open " + getSenderNick())))
+            );
+        return symbol;
+    }
 }

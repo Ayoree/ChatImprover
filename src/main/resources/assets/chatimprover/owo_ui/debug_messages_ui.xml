@@ -44,12 +44,8 @@
                         <left>120</left>
                     </padding>
 
-                    <scrollbar>
-                        <vanilla-flat/>
-                    </scrollbar>
-                    <scrollbar-thiccness>
-                        14
-                    </scrollbar-thiccness>
+                    <scrollbar><vanilla-flat/></scrollbar>
+                    <scrollbar-thiccness>8</scrollbar-thiccness>
                 </scroll>
             </children>
             <vertical-alignment>center</vertical-alignment>
