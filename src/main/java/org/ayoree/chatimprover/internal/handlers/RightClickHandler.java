@@ -30,12 +30,16 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 
+import static org.ayoree.chatimprover.ChatImprover.CONFIG;
+
 public class RightClickHandler {
     public static void init() {
         UseEntityCallback.EVENT.register(RightClickHandler::onInteract);
     }
 
     private static ActionResult onInteract(final PlayerEntity player, final World world, final Hand hand, final Entity entity, final EntityHitResult hitResult) {
+        if (!CONFIG.rightclickMenu())
+            return ActionResult.PASS;
 
         if (player.getMainHandStack().isEmpty()) {
             if (entity instanceof PlayerEntity otherPlayer) {

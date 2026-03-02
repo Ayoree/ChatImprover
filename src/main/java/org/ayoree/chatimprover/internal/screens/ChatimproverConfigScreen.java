@@ -54,7 +54,7 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
     private static final String ID_BTN_SAVE = "btn_save";
     private static final String ID_BTN_CLOSE = "btn_close";
     @SuppressWarnings("null")
-    private static final ImmutableList<Option.Key> CHECKBOXES_KEYS = ImmutableList.of(CONFIG.keys.isBlockTrash, CONFIG.keys.isImproveMessages, CONFIG.keys.chatButtons);
+    private static final ImmutableList<Option.Key> CHECKBOXES_KEYS = ImmutableList.of(CONFIG.keys.isBlockTrash, CONFIG.keys.rightclickMenu, CONFIG.keys.isImproveMessages, CONFIG.keys.chatButtons);
     private static final ImmutableList<Option.Key> STRING_KEYS = ImmutableList.of(CONFIG.keys.senderSymbol, CONFIG.keys.receiverSymbol);
     
     private final Screen m_parent;
@@ -158,6 +158,7 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
             CONFIG.isBlockTrash() != m_boolSettings.get(CONFIG.keys.isBlockTrash) ||
             CONFIG.isImproveMessages() != m_boolSettings.get(CONFIG.keys.isImproveMessages) ||
             CONFIG.chatButtons() != m_boolSettings.get(CONFIG.keys.chatButtons) ||
+            CONFIG.rightclickMenu() != m_boolSettings.get(CONFIG.keys.rightclickMenu) ||
             CONFIG.senderSymbol() != m_stringSettings.get(CONFIG.keys.senderSymbol) ||
             CONFIG.receiverSymbol() != m_stringSettings.get(CONFIG.keys.receiverSymbol) ||
             !CONFIG.disabledAddons().equals(m_disabledAddons)

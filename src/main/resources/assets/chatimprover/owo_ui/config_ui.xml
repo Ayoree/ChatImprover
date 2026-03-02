@@ -29,6 +29,10 @@
                                     <text>Изменять сообщения</text>
                                     <tooltip-text>Менять сообщения в чате на более удобный вид</tooltip-text>
                                 </checkbox>
+                                <checkbox id="rightclickMenu">
+                                    <text>Открывать меню правой кнопкой мыши</text>
+                                    <tooltip-text>Открывать меню при клике пустой рукой на игрока</tooltip-text>
+                                </checkbox>
                                 <checkbox id="chatButtons">
                                     <text>Добавлять в чат кнопки для быстрого открытия меню</text>
                                     <tooltip-text>Добавлять кликабельные кнопки для сообщений, имеющих отправителя и/или получателя</tooltip-text>
