@@ -88,7 +88,7 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
         for (int i = 0; i < MAX_COLUMNS_COUNT; ++i) {
             final FlowLayout column = Containers.verticalFlow(Sizing.fill(100 / MAX_COLUMNS_COUNT), Sizing.content());
             column.alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
-            column.margins(Insets.horizontal(8));
+            column.padding(Insets.horizontal(8));
             columns.add(column);
         }
 
@@ -103,10 +103,12 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
             for (int i = 0; i < elemsInCol; ++i) {
                 col.child(elemsWidgets.pollFirst());
             }
+            container.child(col);
+        }
+        for (final FlowLayout col : columns) {
             if (elemsOverflowCount-- > 0) {
                 col.child(elemsWidgets.pollFirst());
             }
-            container.child(col);
         }
     }
 

@@ -29,6 +29,10 @@
                         <children/>
                         <horizontal-alignment>center</horizontal-alignment>
                         <vertical-alignment>top</vertical-alignment>
+                        <sizing>
+                            <horizontal method="fill">100</horizontal>
+                        </sizing>
+                        <margins><right>8</right></margins>
                     </flow-layout>
                     <positioning type="absolute">0,0</positioning>
                     <sizing>
