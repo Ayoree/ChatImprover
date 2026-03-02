@@ -130,6 +130,10 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
             Option<Boolean> boolOpt = CONFIG.optionForKey(entry.getKey());
             boolOpt.set(entry.getValue());
         }
+        for (final Entry<Option.Key, String> entry : m_stringSettings.entrySet()) {
+            Option<String> stringOpt = CONFIG.optionForKey(entry.getKey());
+            stringOpt.set(entry.getValue());
+        }
         CONFIG.disabledAddons(m_disabledAddons);
         CONFIG.save();
         btn.active(false);
