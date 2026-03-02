@@ -7,6 +7,10 @@ ChatImprover
 
 ChatImprover is a Minecraft mod, that allows you to create custom addons for editing received chat messages in a most flexible way.
 
+Known Addons
+------
+1. [Dexland](https://github.com/Ayoree/ChatImprove-dexland)
+
 API
 ------
 ### [API source](https://github.com/Ayoree/ChatImprover/tree/main/src/main/java/org/ayoree/chatimprover/api)
@@ -20,9 +24,9 @@ repositories {
         url = uri("https://maven.pkg.github.com/Ayoree/ChatImprover")
         credentials {
             username = 'Ayoree'
-            password = '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'
+            password = System.getenv("AYOREE_GET_PACKAGES_KEY") // Ask for it, if you don't want to build it by yourself
         }
-   }
+   	}
 }
 ```
 ```gradle
