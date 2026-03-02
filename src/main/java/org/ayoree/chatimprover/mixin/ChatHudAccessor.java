@@ -31,4 +31,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ChatHudAccessor {
     @Accessor("messages")  // yarn 1.21+: private final List<ChatHudLine> messages
     List<ChatHudLine> getMessages();
+
+    @Accessor("scrolledLines")
+    int getScrolledLines();
 }

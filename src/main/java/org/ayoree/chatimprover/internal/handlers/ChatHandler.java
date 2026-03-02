@@ -23,23 +23,38 @@ import static org.ayoree.chatimprover.ChatImprover.CONFIG;
 
 import org.ayoree.chatimprover.internal.factories.ChatMessageFactory;
 import org.ayoree.chatimprover.internal.factories.FilterFactory;
+import org.ayoree.chatimprover.mixin.ChatHudAccessor;
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.text.Text;
 
 public class ChatHandler {
+    private static MinecraftClient CLIENT;
+
     public static void init() {
+        CLIENT = MinecraftClient.getInstance();
         ClientReceiveMessageEvents.ALLOW_GAME.register(ChatHandler::onAllowMessage);;
-        ClientReceiveMessageEvents.MODIFY_GAME.register(ChatHandler::onMessageReceive);
+        ClientReceiveMessageEvents.MODIFY_GAME.register(ChatHandler::onModifyMessage);
     }
 
     private static boolean onAllowMessage(final Text message, final boolean isOverlay) {
-        if (!CONFIG.isBlockTrash())
-            return true;
-        return !FilterFactory.testAllFilters(message);
+        final boolean isTrash = CONFIG.isBlockTrash() && FilterFactory.testAllFilters(message);
+        if (isTrash)
+            return false;
+
+        final ChatHud chatHud = CLIENT.inGameHud.getChatHud();
+        if (CONFIG.fixChatOnFocus() && chatHud.isChatFocused() && ((ChatHudAccessor)chatHud).getScrolledLines() == 0) {
+            // TODO: add ChatPlus compatibility
+            chatHud.addMessage(onModifyMessage(message, isOverlay));
+            chatHud.scroll(1);
+            return false;
+        }
+        return true;
     }
 
-    private static Text onMessageReceive(final Text origMessage, final boolean overlay) {
+    private static Text onModifyMessage(final Text origMessage, final boolean overlay) {
         if (!CONFIG.isImproveMessages())
             return origMessage;
         return ChatMessageFactory.createChatMessage(origMessage).getChangedMessage();

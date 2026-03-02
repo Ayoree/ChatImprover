@@ -31,6 +31,7 @@ public class ConfigModel {
     public boolean isBlockTrash = true;
     public boolean isImproveMessages = true;
     public boolean rightclickMenu = true;
+    public boolean fixChatOnFocus = true;
     public boolean chatButtons = true;
     public String senderSymbol = "&c[▼]";
     public String receiverSymbol = "&e[▼]";
