@@ -26,11 +26,12 @@
 		"chatimprover.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.18.4",
 		"minecraft": "~1.21.10",
 		"java": ">=21",
+		"fabricloader": "*",
 		"fabric-api": "*",
-		"yet_another_config_lib_v3": "*"
+		"yet_another_config_lib_v3": "*",
+		"owo": "*"
 	},
 	"language": "ru_ru"
 }
