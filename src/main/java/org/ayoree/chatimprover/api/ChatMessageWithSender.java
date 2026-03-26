@@ -40,8 +40,9 @@ public class ChatMessageWithSender extends ChatMessage implements IChatMessageWi
     public final String getSenderNick() { return m_senderNick; }
 
     @Override
-    protected Text addExtraStuff(Text msg) {
-        return CONFIG.chatButtons() ? Text.empty().append(getSymbol()).append(msg) : super.addExtraStuff(msg);
+    public ChatMessage addChatButtons() {
+        m_changedMsg = Text.empty().append(getSymbol()).append(getChangedMessage());
+        return this;
     }
 
     private MutableText getSymbol() {

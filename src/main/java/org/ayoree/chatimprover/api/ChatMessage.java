@@ -43,6 +43,7 @@ public class ChatMessage {
      * This field contains original content of the {@link ChatHud}'s message.
      */
     protected final Text m_message;
+    protected Text m_changedMsg;
     
     /**
      * Constructs {@link ChatMessage} object.
@@ -50,28 +51,40 @@ public class ChatMessage {
      */
     public ChatMessage(@NotNull final Text msg) {
         m_message = msg;
-    }
-
-    /**
-     * This method is used for <b>`improving`</b> original message
-     * <i>(e.g. adding some styles to it or somehow changing the content)</i>.
-     * 
-     * @return {@link Text} changed content of the original message.
-     */
-    public Text getChangedMessage() {
-        return m_message;
-    }
-
-    protected Text addExtraStuff(Text msg) {
-        return msg;
+        m_changedMsg = msg;
     }
 
     /**
      * Getter for {@link #m_message} field.
      * @return {@link Text}
      */
-    public Text getMessage() {
+    public Text getOrigMessage() {
         return m_message;
+    }
+
+    /**
+     * Getter for {@link #m_changedMsg} field.
+     * @return {@link Text}
+     */
+    public Text getChangedMessage() {
+        return m_changedMsg;
+    }
+
+    /**
+     * Changes {@link #m_changedMsg} field.
+     * Used for <b>`improving`</b> original message
+     * <i>(e.g. adding some styles to it or somehow changing the content)</i>.
+     */
+    public ChatMessage generateChangedMsg() {
+        m_changedMsg = m_message;
+        return this;
+    }
+
+    /**
+     * Adds buttons to {@link #m_changedMsg} content
+     */
+    public ChatMessage addChatButtons() {
+        return this;
     }
 
     /**

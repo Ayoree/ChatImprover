@@ -55,8 +55,15 @@ public class ChatHandler {
     }
 
     private static Text onModifyMessage(final Text origMessage, final boolean overlay) {
-        if (!CONFIG.isImproveMessages())
-            return origMessage;
-        return ChatMessageFactory.createChatMessage(origMessage).getChangedMessage();
+        if (CONFIG.isImproveMessages())
+            if (CONFIG.chatButtons())
+                return ChatMessageFactory.createChatMessage(origMessage).generateChangedMsg().addChatButtons().getChangedMessage();
+            else
+                return ChatMessageFactory.createChatMessage(origMessage).generateChangedMsg().getChangedMessage();
+        else
+            if (CONFIG.chatButtons())
+                return ChatMessageFactory.createChatMessage(origMessage).addChatButtons().getChangedMessage();
+            else
+                return ChatMessageFactory.createChatMessage(origMessage).getOrigMessage();
     }
 }
