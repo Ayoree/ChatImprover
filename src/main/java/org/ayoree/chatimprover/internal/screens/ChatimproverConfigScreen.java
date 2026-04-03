@@ -23,7 +23,7 @@ import io.wispforest.owo.config.Option;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.CheckboxComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.fabricmc.loader.api.FabricLoader;
@@ -117,7 +117,7 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
         for (final String addonId : addons) {
             ModContainer modContainer = FabricLoader.getInstance().getModContainer(addonId).get();
             String addonName = modContainer.getMetadata().getName();
-            CheckboxComponent checkbox = Components.checkbox(Text.of(addonName));
+            CheckboxComponent checkbox = UIComponents.checkbox(Text.of(addonName));
             if (!m_disabledAddons.contains(addonId))
                 checkbox.checked(true);
             checkbox.onChanged(value -> onAddonChanged(addonId, value));

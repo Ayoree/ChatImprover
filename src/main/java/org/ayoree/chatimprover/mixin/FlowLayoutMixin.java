@@ -28,21 +28,21 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent ;
 
 @Mixin(FlowLayout.class)
 public abstract class FlowLayoutMixin implements FlowLayoutAccessor, FlowLayoutOperations {
 
     @Shadow(remap = false)
-    protected List<Component> children;
+    protected List<UIComponent > children;
 
     @Override
-    public List<Component> getChildrens() {
+    public List<UIComponent > getChildrens() {
         return this.children;
     }
 
     @Unique
-    public void swapChilds(Component a, Component b) {
+    public void swapChilds(UIComponent  a, UIComponent  b) {
         if (a == null || b == null)
             return;
 

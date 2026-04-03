@@ -25,10 +25,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent ;
 
 @Mixin(FlowLayout.class)
 public interface FlowLayoutAccessor {
     @Accessor("children")
-    List<Component> getChildrens();
+    List<UIComponent > getChildrens();
 }

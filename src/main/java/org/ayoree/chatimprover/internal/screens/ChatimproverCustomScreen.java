@@ -21,12 +21,12 @@ package org.ayoree.chatimprover.internal.screens;
 
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
-import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent ;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
@@ -86,7 +86,7 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
         inputBox.onChanged().subscribe(newInput -> { m_input = newInput; });
 
         for (int i = 0; i < MAX_COLUMNS_COUNT; ++i) {
-            final FlowLayout column = Containers.verticalFlow(Sizing.fill(100 / MAX_COLUMNS_COUNT), Sizing.content());
+            final FlowLayout column = UIContainers.verticalFlow(Sizing.fill(100 / MAX_COLUMNS_COUNT), Sizing.content());
             column.alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
             column.padding(Insets.horizontal(8));
             columns.add(column);
@@ -113,14 +113,14 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
     private void addElem(final Deque<FlowLayout> elemsDeque, final CustomScreenConfigCategory elem) {
-        final FlowLayout vertical = Containers.verticalFlow(Sizing.content(), Sizing.content());
+        final FlowLayout vertical = UIContainers.verticalFlow(Sizing.content(), Sizing.content());
         final Deque<ButtonComponent> commandsWidgets = new ArrayDeque<>();
         final List<CustomScreenConfigCommand> commands = elem.commands();
 
         vertical.alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
         
         for (final CustomScreenConfigCommand command : commands) {
-            ButtonComponent button = Components.button(Text.of(command.name()), btn -> {
+            ButtonComponent button = UIComponents.button(Text.of(command.name()), btn -> {
                 final String finalCommand = command.command().replace("{INPUT}", m_input);
                 final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
                 if (finalCommand.startsWith("/"))
@@ -132,12 +132,12 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
             commandsWidgets.add(button);
         }
         
-        final LabelComponent label = Components.label(Text.of(elem.name()));
+        final LabelComponent label = UIComponents.label(Text.of(elem.name()));
         label.margins(Insets.of(16, 8, 0 ,0));
         vertical.child(label);
 
         while (!commandsWidgets.isEmpty()) {
-            final FlowLayout horizontal = Containers.horizontalFlow(Sizing.fill(100), Sizing.content());
+            final FlowLayout horizontal = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.content());
             horizontal.alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
             addButtonsToContainer(horizontal, commandsWidgets);
             vertical.child(horizontal);
@@ -150,7 +150,7 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
         if (buttons.isEmpty())
             return;
 
-        final List<Component> childs = container.children();
+        final List<UIComponent > childs = container.children();
         if (childs.isEmpty()) {
             container.child(buttons.pollFirst());
         }
@@ -158,7 +158,7 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
         final int containerWidth = width / MAX_COLUMNS_COUNT - 16; // bad AF
         System.out.println("Column width: %s".formatted(containerWidth));
         int childsWidth = 0;
-        for (final Component child : childs) {
+        for (final UIComponent  child : childs) {
             ButtonComponent btn = (ButtonComponent)child;
             childsWidth += getButtonWidth(btn);
         }
