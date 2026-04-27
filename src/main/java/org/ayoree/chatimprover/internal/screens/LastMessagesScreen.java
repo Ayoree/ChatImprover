@@ -103,7 +103,7 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
         copyButton.margins(Insets.right(5));
         flow.child(copyButton);
         if (siblings.isEmpty())
-            flow.child(UIComponents.label(textNoStyle));
+            flow.child(UIComponents.label(Text.literal("`").append(textNoStyle).append("`")));
         else {
             CollapsibleContainer collapsible = UIContainers.collapsible(Sizing.fill(100), Sizing.content(), textNoStyle, false);
             flow.child(collapsible);
