@@ -26,9 +26,9 @@ import org.ayoree.chatimprover.mixin.ChatHudAccessor;
 
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.CollapsibleContainer;
-import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
@@ -91,10 +91,10 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
 
         Text textNoStyle = removeMouseStyles(text.copy());
 
-        FlowLayout flow = Containers.horizontalFlow(Sizing.fill(100), Sizing.content());
+        FlowLayout flow = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.content());
         flow.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
         container.child(flow);
-        ButtonComponent copyButton = Components.button(Text.of(curIndex), btn -> {
+        ButtonComponent copyButton = UIComponents.button(Text.of(curIndex), btn -> {
                 Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
                 StringSelection data = new StringSelection(text.getString());
                 cb.setContents(data, null);
@@ -103,9 +103,9 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
         copyButton.margins(Insets.right(5));
         flow.child(copyButton);
         if (siblings.isEmpty())
-            flow.child(Components.label(textNoStyle));
+            flow.child(UIComponents.label(Text.literal("`").append(textNoStyle).append("`")));
         else {
-            CollapsibleContainer collapsible = Containers.collapsible(Sizing.fill(100), Sizing.content(), textNoStyle, false);
+            CollapsibleContainer collapsible = UIContainers.collapsible(Sizing.fill(100), Sizing.content(), textNoStyle, false);
             flow.child(collapsible);
             depth.push(0);
             for (final Text sibling : text.getSiblings()) {

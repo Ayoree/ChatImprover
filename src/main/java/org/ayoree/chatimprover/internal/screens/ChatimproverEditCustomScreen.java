@@ -21,10 +21,10 @@ package org.ayoree.chatimprover.internal.screens;
 
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.CollapsibleContainer;
-import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
@@ -78,7 +78,7 @@ public class ChatimproverEditCustomScreen extends BaseUIModelScreen<FlowLayout> 
         m_btnSave.active(false);
         m_btnSave.onPress(btn -> { save(btn); });
 
-        final TextBoxComponent titleBox = Components.textBox(Sizing.fill(), m_title);
+        final TextBoxComponent titleBox = UIComponents.textBox(Sizing.fill(), m_title);
         titleBox.setPlaceholder(Text.of("Заголовок"));
         titleBox.onChanged().subscribe(newTitle -> {
             m_title = newTitle;
@@ -114,16 +114,16 @@ public class ChatimproverEditCustomScreen extends BaseUIModelScreen<FlowLayout> 
     }
 
     private void addCategory(final FlowLayout container, final CustomScreenConfigCategory configCategory) {
-        final FlowLayout vertFlow = Containers.verticalFlow(Sizing.fill(), Sizing.content());
-        final FlowLayout horFlow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
-        final ButtonComponent btnUp = Components.button(Text.of("↑"), null);
-        final ButtonComponent btnDown = Components.button(Text.of("↓"), null);
-        final TextBoxComponent textBox = Components.textBox(Sizing.expand());
-        final ButtonComponent btnRemove = Components.button(Text.of("✖"), null);
-        final CollapsibleContainer collapsible = Containers.collapsible(Sizing.fill(), Sizing.content(), Text.of("Команды"), false);
-        final ButtonComponent btnAddCommand = Components.button(Text.of("Добавить"), null);
-        final FlowLayout commandsContainer = Containers.verticalFlow(Sizing.fill(), Sizing.content());
-        final FlowLayout afterCommandsContainer = Containers.verticalFlow(Sizing.fill(), Sizing.content());
+        final FlowLayout vertFlow = UIContainers.verticalFlow(Sizing.fill(), Sizing.content());
+        final FlowLayout horFlow = UIContainers.horizontalFlow(Sizing.fill(), Sizing.content());
+        final ButtonComponent btnUp = UIComponents.button(Text.of("↑"), null);
+        final ButtonComponent btnDown = UIComponents.button(Text.of("↓"), null);
+        final TextBoxComponent textBox = UIComponents.textBox(Sizing.expand());
+        final ButtonComponent btnRemove = UIComponents.button(Text.of("✖"), null);
+        final CollapsibleContainer collapsible = UIContainers.collapsible(Sizing.fill(), Sizing.content(), Text.of("Команды"), false);
+        final ButtonComponent btnAddCommand = UIComponents.button(Text.of("Добавить"), null);
+        final FlowLayout commandsContainer = UIContainers.verticalFlow(Sizing.fill(), Sizing.content());
+        final FlowLayout afterCommandsContainer = UIContainers.verticalFlow(Sizing.fill(), Sizing.content());
         vertFlow.margins(Insets.top(8));
         horFlow.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
         textBox.setPlaceholder(Text.of("Название категории"));
@@ -183,12 +183,12 @@ public class ChatimproverEditCustomScreen extends BaseUIModelScreen<FlowLayout> 
 
     private void addCommand(final FlowLayout container, final Elem<CustomScreenConfigCategory> thisConfigCategory, final CustomScreenConfigCommand command) {
         final List<Elem<CustomScreenConfigCommand>> commands = m_categoryCommands.get(thisConfigCategory);
-        final FlowLayout horFlow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
-        final ButtonComponent btnUp = Components.button(Text.of("↑"), null);
-        final ButtonComponent btnDown = Components.button(Text.of("↓"), null);
-        final TextBoxComponent nameTextBox = Components.textBox(Sizing.fixed(60));
-        final TextBoxComponent commandTextBox = Components.textBox(Sizing.expand());
-        final ButtonComponent btnRemove = Components.button(Text.of("✖"), null);
+        final FlowLayout horFlow = UIContainers.horizontalFlow(Sizing.fill(), Sizing.content());
+        final ButtonComponent btnUp = UIComponents.button(Text.of("↑"), null);
+        final ButtonComponent btnDown = UIComponents.button(Text.of("↓"), null);
+        final TextBoxComponent nameTextBox = UIComponents.textBox(Sizing.fixed(60));
+        final TextBoxComponent commandTextBox = UIComponents.textBox(Sizing.expand());
+        final ButtonComponent btnRemove = UIComponents.button(Text.of("✖"), null);
         horFlow.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
         nameTextBox.setPlaceholder(Text.of("Название"));
         nameTextBox.text(command.name());

@@ -21,9 +21,9 @@ package org.ayoree.chatimprover.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
-import io.wispforest.owo.ui.base.BaseParentComponent;
+import io.wispforest.owo.ui.base.BaseParentUIComponent;
 
-@Mixin(BaseParentComponent.class)
+@Mixin(BaseParentUIComponent.class)
 public interface BaseParentComponentInvoker {
     @Invoker(value = "updateLayout", remap = false)
     void invokeUpdateLayout();

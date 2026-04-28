@@ -19,7 +19,7 @@
 
 package org.ayoree.chatimprover.api.mixin;
 
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent ;
 
 public interface FlowLayoutOperations {
     /**
@@ -27,5 +27,5 @@ public interface FlowLayoutOperations {
      * @param a first component to swap
      * @param b second component to swap
      */
-    void swapChilds(Component a, Component b);
+    void swapChilds(UIComponent  a, UIComponent  b);
 }

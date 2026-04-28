@@ -27,9 +27,10 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	// ModMenu
-	maven { url = "https://maven.terraformersmc.com/" }
+	maven { url 'https://maven.terraformersmc.com/' }
 	// OWO lib
 	maven { url 'https://maven.wispforest.io' }
+	maven { url 'https://jitpack.io'}
 }
 
 dependencies {
