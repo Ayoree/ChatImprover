@@ -43,8 +43,13 @@ public class ChatMessageFactory {
             .map(ServiceLoader.Provider::get)
             .forEach(provider -> {
                 provider.IPs().get().forEach(addr -> {
-                    ArrayList<ChatMessage.Provider> array = REGISTRY.computeIfAbsent(addr, k -> new ArrayList<>());
+                    ArrayList<ChatMessage.Provider> array = REGISTRY.computeIfAbsent(addr.toLowerCase(), k -> new ArrayList<>());
                     array.add(provider);
+                    if (!addr.contains(":"))
+                    {
+                        array = REGISTRY.computeIfAbsent(addr.toLowerCase().concat(":25565"), k -> new ArrayList<>());
+                        array.add(provider);
+                    }
                 });
             });
     }
@@ -52,7 +57,7 @@ public class ChatMessageFactory {
     public static ChatMessage createChatMessage(Text text) {
         if (SERVER_INFO != null) {
             final Set<String> disabledAddons = CONFIG.disabledAddons();
-            ArrayList<ChatMessage.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.address, new ArrayList<>());
+            ArrayList<ChatMessage.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.address.toLowerCase(), new ArrayList<>());
             for (final ChatMessage.Provider provider : arr) {
                 if (disabledAddons.contains(provider.addonID().get()))
                     continue;
