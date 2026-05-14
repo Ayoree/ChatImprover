@@ -20,6 +20,7 @@
 package org.ayoree.chatimprover.internal.factories;
 
 import static org.ayoree.chatimprover.ChatImprover.CONFIG;
+import static org.ayoree.chatimprover.ChatImprover.LOGGER;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,9 +46,9 @@ public class ChatMessageFactory {
                 provider.IPs().get().forEach(addr -> {
                     ArrayList<ChatMessage.Provider> array = REGISTRY.computeIfAbsent(addr.toLowerCase(), k -> new ArrayList<>());
                     array.add(provider);
-                    if (!addr.contains(":"))
-                    {
+                    if (!addr.contains(":")) {
                         array = REGISTRY.computeIfAbsent(addr.toLowerCase().concat(":25565"), k -> new ArrayList<>());
+                        LOGGER.info("Registering chat message provider `{}` from addon `{}` for server `{}`", provider.getClass().getName(), provider.addonID().get(), addr.toLowerCase().concat(":25565"));
                         array.add(provider);
                     }
                 });
@@ -61,8 +62,10 @@ public class ChatMessageFactory {
             for (final ChatMessage.Provider provider : arr) {
                 if (disabledAddons.contains(provider.addonID().get()))
                     continue;
-                if (provider.validator().test(text))
+                if (provider.validator().test(text)) {
+                    LOGGER.debug("ChatMessage `{}` from addon `{}` matched the message", provider.getClass().getName(), provider.addonID().get());
                     return provider.creator().apply(text);
+                }
             }
         }
         return new ChatMessage(text);

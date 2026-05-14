@@ -20,6 +20,7 @@
 package org.ayoree.chatimprover.internal.factories;
 
 import static org.ayoree.chatimprover.ChatImprover.CONFIG;
+import static org.ayoree.chatimprover.ChatImprover.LOGGER;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,8 +44,13 @@ public class FilterFactory {
             .map(ServiceLoader.Provider::get)
             .forEach(provider -> {
                 provider.IPs().get().forEach(addr -> {
-                    ArrayList<Filter.Provider> array = REGISTRY.computeIfAbsent(addr, k -> new ArrayList<>());
+                    ArrayList<Filter.Provider> array = REGISTRY.computeIfAbsent(addr.toLowerCase(), k -> new ArrayList<>());
                     array.add(provider);
+                    if (!addr.contains(":")) {
+                        array = REGISTRY.computeIfAbsent(addr.toLowerCase().concat(":25565"), k -> new ArrayList<>());
+                        LOGGER.info("Registering filter provider `{}` from addon `{}` for server `{}`", provider.getClass().getName(), provider.addonID().get(), addr.toLowerCase().concat(":25565"));
+                        array.add(provider);
+                    }
                 });
             });
     }
@@ -52,12 +58,14 @@ public class FilterFactory {
     public static boolean testAllFilters(Text text) {
         if (SERVER_INFO != null) {
             final Set<String> disabledAddons = CONFIG.disabledAddons();
-            ArrayList<Filter.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.address, new ArrayList<>());
+            ArrayList<Filter.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.address.toLowerCase(), new ArrayList<>());
             for (final Filter.Provider provider : arr) {
                 if (disabledAddons.contains(provider.addonID().get()))
                     continue;
-                if (provider.validator().test(text))
+                if (provider.validator().test(text)) {
+                    LOGGER.debug("Filter `{}` from addon `{}` matched the message, blocking it", provider.getClass().getName(), provider.addonID().get());
                     return true;
+                }
             }
         }
         return false;
