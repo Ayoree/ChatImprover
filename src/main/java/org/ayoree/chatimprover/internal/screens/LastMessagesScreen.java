@@ -26,6 +26,7 @@ import org.ayoree.chatimprover.mixin.ChatHudAccessor;
 
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
+import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.CollapsibleContainer;
 import io.wispforest.owo.ui.container.UIContainers;
@@ -93,6 +94,7 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
 
         FlowLayout flow = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.content());
         flow.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+        flow.margins(Insets.bottom(4));
         container.child(flow);
         ButtonComponent copyButton = UIComponents.button(Text.of(curIndex), btn -> {
                 Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -107,6 +109,23 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
         else {
             CollapsibleContainer collapsible = UIContainers.collapsible(Sizing.fill(100), Sizing.content(), textNoStyle, false);
             flow.child(collapsible);
+            
+            // Content only
+            ButtonComponent copyButton2 = UIComponents.button(Text.literal("Content"), btn -> {
+                Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+                StringSelection data = new StringSelection(textNoStyle.copyContentOnly().getString());
+                cb.setContents(data, null);
+            });
+            copyButton2.tooltip(Text.of("Копировать"));
+            copyButton2.margins(Insets.right(5));
+            LabelComponent label = UIComponents.label(Text.literal("`").append(textNoStyle.copyContentOnly()).append(Text.literal("`")));
+            FlowLayout flow2 = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.content());
+            flow2.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+            flow2.margins(Insets.bottom(4));
+            flow2.child(copyButton2);
+            flow2.child(label);
+            collapsible.child(flow2);
+
             depth.push(0);
             for (final Text sibling : text.getSiblings()) {
                 addRecursiveOptions(collapsible, depth, sibling);
