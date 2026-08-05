@@ -30,11 +30,11 @@ import java.util.Set;
 import org.ayoree.chatimprover.api.ChatMessage;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.text.Text;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.network.chat.Component;
 
 public class ChatMessageFactory {
-    private static ServerInfo SERVER_INFO = null;
+    private static ServerData SERVER_INFO = null;
     private static final HashMap<String, ArrayList<ChatMessage.Provider>> REGISTRY = new HashMap<>();
 
     // Load all providers
@@ -55,10 +55,10 @@ public class ChatMessageFactory {
             });
     }
 
-    public static ChatMessage createChatMessage(Text text) {
+    public static ChatMessage createChatMessage(Component text) {
         if (SERVER_INFO != null) {
             final Set<String> disabledAddons = CONFIG.disabledAddons();
-            ArrayList<ChatMessage.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.address.toLowerCase(), new ArrayList<>());
+            ArrayList<ChatMessage.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.ip.toLowerCase(), new ArrayList<>());
             for (final ChatMessage.Provider provider : arr) {
                 if (disabledAddons.contains(provider.addonID().get()))
                     continue;
@@ -71,7 +71,7 @@ public class ChatMessageFactory {
         return new ChatMessage(text);
     }
 
-    public static void setCurrentServer(ServerInfo serverInfo) {
+    public static void setCurrentServer(ServerData serverInfo) {
         SERVER_INFO = serverInfo;
     }
     

@@ -30,11 +30,11 @@ import java.util.Set;
 import org.ayoree.chatimprover.api.Filter;
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.text.Text;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.network.chat.Component;
 
 public class FilterFactory {
-    private static ServerInfo SERVER_INFO = null;
+    private static ServerData SERVER_INFO = null;
     private static final HashMap<String, ArrayList<Filter.Provider>> REGISTRY = new HashMap<>();
 
     // Load all providers
@@ -55,10 +55,10 @@ public class FilterFactory {
             });
     }
 
-    public static boolean testAllFilters(Text text) {
+    public static boolean testAllFilters(Component text) {
         if (SERVER_INFO != null) {
             final Set<String> disabledAddons = CONFIG.disabledAddons();
-            ArrayList<Filter.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.address.toLowerCase(), new ArrayList<>());
+            ArrayList<Filter.Provider> arr = REGISTRY.getOrDefault(SERVER_INFO.ip.toLowerCase(), new ArrayList<>());
             for (final Filter.Provider provider : arr) {
                 if (disabledAddons.contains(provider.addonID().get()))
                     continue;
@@ -71,7 +71,7 @@ public class FilterFactory {
         return false;
     }
 
-    public static void setCurrentServer(ServerInfo serverInfo) {
+    public static void setCurrentServer(ServerData serverInfo) {
         SERVER_INFO = serverInfo;
     }
     

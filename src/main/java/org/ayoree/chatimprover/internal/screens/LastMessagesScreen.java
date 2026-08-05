@@ -42,38 +42,38 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.client.gui.hud.ChatHudLine;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
     private static final String ID_CONTAINER = "container";
     private final Screen m_parent;
 
     public LastMessagesScreen(Screen parent) {
-        super(FlowLayout.class, DataSource.asset(Identifier.of(MOD_ID, "debug_messages_ui")));
+        super(FlowLayout.class, DataSource.asset(Identifier.fromNamespaceAndPath(MOD_ID, "debug_messages_ui")));
         m_parent = parent;
     }
 
     @Override
-    public void close() {
-        client.setScreen(m_parent);
+    public void onClose() {
+        this.minecraft.gui.setScreen(m_parent);
     }
 
     @Override
     protected void build(FlowLayout rootComponent) {
         final FlowLayout container = rootComponent.childById(FlowLayout.class, ID_CONTAINER);
         
-        ChatHud chatHud = MinecraftClient.getInstance().inGameHud.getChatHud();
-        List<ChatHudLine> messages = ((ChatHudAccessor) chatHud).getMessages();
+        ChatComponent chatHud = Minecraft.getInstance().gui.hud.getChat();
+        List<GuiMessage> messages = ((ChatHudAccessor) chatHud).getMessages();
 
         int i = 0;
-        for (ChatHudLine chatHudLine : messages) {
+        for (GuiMessage chatHudLine : messages) {
             Stack<Integer> depth = new Stack<Integer>();
             addRecursiveOptions(container, depth, chatHudLine.content());
 
@@ -82,43 +82,43 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
         }
     }
 
-    static private void addRecursiveOptions(final FlowLayout container, Stack<Integer> depth, final Text text) {
-        final List<Text> siblings = text.getSiblings();
+    static private void addRecursiveOptions(final FlowLayout container, Stack<Integer> depth, final Component text) {
+        final List<Component> siblings = text.getSiblings();
         String curIndex = "Main";
         if (!depth.empty()) {
             final int i = depth.lastElement();
             curIndex = "[" + i + "]";
         }
 
-        Text textNoStyle = removeMouseStyles(text.copy());
+        Component textNoStyle = removeMouseStyles(text.copy());
 
         FlowLayout flow = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.content());
         flow.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
         flow.margins(Insets.bottom(4));
         container.child(flow);
-        ButtonComponent copyButton = UIComponents.button(Text.of(curIndex), btn -> {
+        ButtonComponent copyButton = UIComponents.button(Component.nullToEmpty(curIndex), btn -> {
                 Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
                 StringSelection data = new StringSelection(text.getString());
                 cb.setContents(data, null);
             });
-        copyButton.tooltip(Text.of("Копировать"));
+        copyButton.tooltip(Component.nullToEmpty("Копировать"));
         copyButton.margins(Insets.right(5));
         flow.child(copyButton);
         if (siblings.isEmpty())
-            flow.child(UIComponents.label(Text.literal("`").append(textNoStyle).append("`")));
+            flow.child(UIComponents.label(Component.literal("`").append(textNoStyle).append("`")));
         else {
             CollapsibleContainer collapsible = UIContainers.collapsible(Sizing.fill(100), Sizing.content(), textNoStyle, false);
             flow.child(collapsible);
             
             // Content only
-            ButtonComponent copyButton2 = UIComponents.button(Text.literal("Content"), btn -> {
+            ButtonComponent copyButton2 = UIComponents.button(Component.literal("Content"), btn -> {
                 Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
-                StringSelection data = new StringSelection(textNoStyle.copyContentOnly().getString());
+                StringSelection data = new StringSelection(textNoStyle.plainCopy().getString());
                 cb.setContents(data, null);
             });
-            copyButton2.tooltip(Text.of("Копировать"));
+            copyButton2.tooltip(Component.nullToEmpty("Копировать"));
             copyButton2.margins(Insets.right(5));
-            LabelComponent label = UIComponents.label(Text.literal("`").append(textNoStyle.copyContentOnly()).append(Text.literal("`")));
+            LabelComponent label = UIComponents.label(Component.literal("`").append(textNoStyle.plainCopy()).append(Component.literal("`")));
             FlowLayout flow2 = UIContainers.horizontalFlow(Sizing.fill(100), Sizing.content());
             flow2.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
             flow2.margins(Insets.bottom(4));
@@ -127,7 +127,7 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
             collapsible.child(flow2);
 
             depth.push(0);
-            for (final Text sibling : text.getSiblings()) {
+            for (final Component sibling : text.getSiblings()) {
                 addRecursiveOptions(collapsible, depth, sibling);
                 depth.push(depth.pop() + 1);
             }
@@ -135,10 +135,10 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
         }
     }
 
-    static private Text removeMouseStyles(MutableText text) {
+    static private Component removeMouseStyles(MutableComponent text) {
 
         Style textStyle = text.getStyle();
-        MutableText textNoStyle;
+        MutableComponent textNoStyle;
         if (textStyle.getHoverEvent() != null || textStyle.getClickEvent() != null) {
             textStyle = textStyle.withHoverEvent(null);
             textStyle = textStyle.withClickEvent(null);
@@ -147,9 +147,9 @@ public class LastMessagesScreen extends BaseUIModelScreen<FlowLayout> {
         else
             textNoStyle = text;
 
-        final List<Text> siblings = text.getSiblings();
+        final List<Component> siblings = text.getSiblings();
         for (int i = 0; i < siblings.size(); ++i) {
-            final MutableText sibling = siblings.get(i).copy();
+            final MutableComponent sibling = siblings.get(i).copy();
             siblings.set(i, removeMouseStyles(sibling));
         }
 

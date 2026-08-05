@@ -24,9 +24,9 @@ import org.ayoree.chatimprover.internal.factories.FilterFactory;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.ServerData;
 
 public class ConnectionHandler {
     public static void init() {
@@ -34,14 +34,14 @@ public class ConnectionHandler {
         ClientPlayConnectionEvents.DISCONNECT.register(ConnectionHandler::onDisconnect);
     }
 
-    private static void onConnect(final ClientPlayNetworkHandler networkHandler, final PacketSender sender, final MinecraftClient client) {
-        final ServerInfo server = client.getCurrentServerEntry();
+    private static void onConnect(final ClientPacketListener networkHandler, final PacketSender sender, final Minecraft client) {
+        final ServerData server = client.getCurrentServer();
         ChatMessageFactory.setCurrentServer(server);
         FilterFactory.setCurrentServer(server);
     }
 
-    private static void onDisconnect(final ClientPlayNetworkHandler networkHandler, final MinecraftClient client) {
-        final ServerInfo server = client.getCurrentServerEntry();
+    private static void onDisconnect(final ClientPacketListener networkHandler, final Minecraft client) {
+        final ServerData server = client.getCurrentServer();
         ChatMessageFactory.setCurrentServer(server);
         FilterFactory.setCurrentServer(server);
     }

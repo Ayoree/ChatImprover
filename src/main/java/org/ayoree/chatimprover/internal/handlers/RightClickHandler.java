@@ -22,13 +22,13 @@ package org.ayoree.chatimprover.internal.handlers;
 import org.ayoree.chatimprover.internal.screens.ChatimproverCustomScreen;
 
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.level.Level;
 
 import static org.ayoree.chatimprover.ChatImprover.CONFIG;
 
@@ -37,18 +37,18 @@ public class RightClickHandler {
         UseEntityCallback.EVENT.register(RightClickHandler::onInteract);
     }
 
-    private static ActionResult onInteract(final PlayerEntity player, final World world, final Hand hand, final Entity entity, final EntityHitResult hitResult) {
+    private static InteractionResult onInteract(final Player player, final Level world, final InteractionHand hand, final Entity entity, final EntityHitResult hitResult) {
         if (!CONFIG.rightclickMenu())
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
 
-        if (player.getMainHandStack().isEmpty()) {
-            if (entity instanceof PlayerEntity otherPlayer) {
-                final MinecraftClient client = MinecraftClient.getInstance();
-                client.setScreen(new ChatimproverCustomScreen(client.currentScreen, otherPlayer.getGameProfile().name()));
-                player.swingHand(player.getActiveHand());
-                return ActionResult.SUCCESS;
+        if (player.getMainHandItem().isEmpty()) {
+            if (entity instanceof Player otherPlayer) {
+                final Minecraft client = Minecraft.getInstance();
+                client.gui.setScreen(new ChatimproverCustomScreen(client.gui.screen(), otherPlayer.getGameProfile().name()));
+                player.swing(player.getUsedItemHand());
+                return InteractionResult.SUCCESS;
             }
         }
-        return ActionResult.PASS;
+        return InteractionResult.PASS;
     }
 }

@@ -23,16 +23,16 @@ import static org.ayoree.chatimprover.ChatImprover.CONFIG;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 public class ChatMessageWithSender extends ChatMessage implements IChatMessageWithSender {
     private String m_senderNick;
     
-    public ChatMessageWithSender(@NotNull Text msg) {
+    public ChatMessageWithSender(@NotNull Component msg) {
         super(msg);
     }
 
@@ -41,16 +41,16 @@ public class ChatMessageWithSender extends ChatMessage implements IChatMessageWi
 
     @Override
     public ChatMessage addChatButtons() {
-        m_changedMsg = Text.empty().append(getSymbol()).append(getChangedMessage());
+        m_changedMsg = Component.empty().append(getSymbol()).append(getChangedMessage());
         return this;
     }
 
-    private MutableText getSymbol() {
-        final MutableText symbol = Text.literal(
+    private MutableComponent getSymbol() {
+        final MutableComponent symbol = Component.literal(
             CONFIG.senderSymbol().replace('&', '§'))
             .setStyle(Style.EMPTY
                 .withClickEvent(new ClickEvent.RunCommand("ayo open " + getSenderNick()))
-                .withHoverEvent(new HoverEvent.ShowText(Text.of("/ayo open " + getSenderNick())))
+                .withHoverEvent(new HoverEvent.ShowText(Component.nullToEmpty("/ayo open " + getSenderNick())))
             );
         return symbol;
     }

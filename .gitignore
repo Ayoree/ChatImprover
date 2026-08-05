@@ -1,6 +1,7 @@
 # gradle
 
 .gradle/
+.claude/
 build/
 out/
 classes/

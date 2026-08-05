@@ -31,11 +31,11 @@ import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.VerticalAlignment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 import static org.ayoree.chatimprover.ChatImprover.CONFIG_CUSTOM_SCREEN;
 import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
@@ -63,13 +63,13 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
     public ChatimproverCustomScreen(final Screen parent) {
-        super(FlowLayout.class, DataSource.asset(Identifier.of(MOD_ID, "custom_screen_ui")));
+        super(FlowLayout.class, DataSource.asset(Identifier.fromNamespaceAndPath(MOD_ID, "custom_screen_ui")));
         m_parent = parent;
     }
 
     @Override
-    public void close() {
-        client.setScreen(m_parent);
+    public void onClose() {
+        this.minecraft.gui.setScreen(m_parent);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
         final Deque<FlowLayout> elemsWidgets = new ArrayDeque<>();
         final TextBoxComponent inputBox = rootComponent.childById(TextBoxComponent.class, ID_INPUT);
         
-        rootComponent.childById(LabelComponent.class, ID_LABEL).text(Text.of(CONFIG_CUSTOM_SCREEN.title()));
+        rootComponent.childById(LabelComponent.class, ID_LABEL).text(Component.nullToEmpty(CONFIG_CUSTOM_SCREEN.title()));
 
         inputBox.text(m_input);
         inputBox.onChanged().subscribe(newInput -> { m_input = newInput; });
@@ -120,19 +120,19 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
         vertical.alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
         
         for (final CustomScreenConfigCommand command : commands) {
-            ButtonComponent button = UIComponents.button(Text.of(command.name()), btn -> {
+            ButtonComponent button = UIComponents.button(Component.nullToEmpty(command.name()), btn -> {
                 final String finalCommand = command.command().replace("{INPUT}", m_input);
-                final ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+                final ClientPacketListener networkHandler = Minecraft.getInstance().getConnection();
                 if (finalCommand.startsWith("/"))
-                    networkHandler.sendChatCommand(finalCommand.substring(1));
+                    networkHandler.sendCommand(finalCommand.substring(1));
                 else
-                    networkHandler.sendChatMessage(finalCommand);
+                    networkHandler.sendChat(finalCommand);
             });
-            button.tooltip(Text.of(command.command()));
+            button.tooltip(Component.nullToEmpty(command.command()));
             commandsWidgets.add(button);
         }
         
-        final LabelComponent label = UIComponents.label(Text.of(elem.name()));
+        final LabelComponent label = UIComponents.label(Component.nullToEmpty(elem.name()));
         label.margins(Insets.of(16, 8, 0 ,0));
         vertical.child(label);
 
@@ -172,8 +172,8 @@ public class ChatimproverCustomScreen extends BaseUIModelScreen<FlowLayout> {
 
     // bad AF
     private int getButtonWidth(ButtonComponent btn) {
-        var textRenderer = this.client.textRenderer;
-        int w = textRenderer.getWidth(btn.getMessage()) + 8;
+        var textRenderer = this.minecraft.font;
+        int w = textRenderer.width(btn.getMessage()) + 8;
         System.out.println("btn '%s' size: %d".formatted(btn.getMessage().getString(), w));
         return w;
     }

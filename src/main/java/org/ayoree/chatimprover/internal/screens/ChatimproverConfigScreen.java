@@ -28,9 +28,9 @@ import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 import static org.ayoree.chatimprover.ChatImprover.CONFIG;
 import static org.ayoree.chatimprover.ChatImprover.MOD_ID;
@@ -64,13 +64,13 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
     private ButtonComponent m_btnSave;
 
     public ChatimproverConfigScreen(Screen parent) {
-        super(FlowLayout.class, DataSource.asset(Identifier.of(MOD_ID, "config_ui")));
+        super(FlowLayout.class, DataSource.asset(Identifier.fromNamespaceAndPath(MOD_ID, "config_ui")));
         m_parent = parent;
     }
 
     @Override
-    public void close() {
-        client.setScreen(m_parent);
+    public void onClose() {
+        this.minecraft.gui.setScreen(m_parent);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
         }
 
         rootComponent.childById(ButtonComponent.class, ID_BTN_CLOSE)
-            .onPress(btn -> { close(); });
+            .onPress(btn -> { onClose(); });
 
         // Creating addons list
         final Set<String> addons = new HashSet<>();
@@ -117,7 +117,7 @@ public class ChatimproverConfigScreen extends BaseUIModelScreen<FlowLayout> {
         for (final String addonId : addons) {
             ModContainer modContainer = FabricLoader.getInstance().getModContainer(addonId).get();
             String addonName = modContainer.getMetadata().getName();
-            CheckboxComponent checkbox = UIComponents.checkbox(Text.of(addonName));
+            CheckboxComponent checkbox = UIComponents.checkbox(Component.nullToEmpty(addonName));
             if (!m_disabledAddons.contains(addonId))
                 checkbox.checked(true);
             checkbox.onChanged(value -> onAddonChanged(addonId, value));

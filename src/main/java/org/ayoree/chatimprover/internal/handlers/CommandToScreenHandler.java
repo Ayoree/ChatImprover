@@ -23,8 +23,8 @@ import java.util.function.Function;
 
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 
 public class CommandToScreenHandler {
     private static Function<Screen, Screen> OPENER = null;
@@ -33,9 +33,9 @@ public class CommandToScreenHandler {
         ClientTickEvents.END_CLIENT_TICK.register(CommandToScreenHandler::checkScreens);
     }
 
-    private static void checkScreens(final MinecraftClient client) {
+    private static void checkScreens(final Minecraft client) {
         if (OPENER != null) {
-            client.setScreen(OPENER.apply(client.currentScreen));
+            client.gui.setScreen(OPENER.apply(client.gui.screen()));
             OPENER = null;
         }
     }

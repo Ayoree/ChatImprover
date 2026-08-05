@@ -23,17 +23,17 @@ import static org.ayoree.chatimprover.ChatImprover.CONFIG;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 public class ChatMessageWithReceiverAndSender extends ChatMessage implements IChatMessageWithSender, IChatMessageWithReceiver {
     private String m_senderNick;
     private String m_receiverNick;
     
-    public ChatMessageWithReceiverAndSender(@NotNull final Text msg) {
+    public ChatMessageWithReceiverAndSender(@NotNull final Component msg) {
         super(msg);
     }
 
@@ -44,23 +44,23 @@ public class ChatMessageWithReceiverAndSender extends ChatMessage implements ICh
 
     @Override
     public ChatMessage addChatButtons() {
-        m_changedMsg = Text.empty().append(getSymbol()).append(getChangedMessage());
+        m_changedMsg = Component.empty().append(getSymbol()).append(getChangedMessage());
         return this;
     }
     
-    private MutableText getSymbol() {
-        final MutableText symbol1 = Text.literal(
+    private MutableComponent getSymbol() {
+        final MutableComponent symbol1 = Component.literal(
             CONFIG.senderSymbol().replace('&', '§'))
             .setStyle(Style.EMPTY
                 .withClickEvent(new ClickEvent.RunCommand("ayo open " + getSenderNick()))
-                .withHoverEvent(new HoverEvent.ShowText(Text.of("/ayo open " + getSenderNick())))
+                .withHoverEvent(new HoverEvent.ShowText(Component.nullToEmpty("/ayo open " + getSenderNick())))
             );
 
-        final MutableText symbol2 = Text.literal(
+        final MutableComponent symbol2 = Component.literal(
             CONFIG.receiverSymbol().replace('&', '§'))
             .setStyle(Style.EMPTY
                 .withClickEvent(new ClickEvent.RunCommand("ayo open " + getReceiverNick()))
-                .withHoverEvent(new HoverEvent.ShowText(Text.of("/ayo open " + getReceiverNick())))
+                .withHoverEvent(new HoverEvent.ShowText(Component.nullToEmpty("/ayo open " + getReceiverNick())))
             );
         return symbol1.append(symbol2);
     }

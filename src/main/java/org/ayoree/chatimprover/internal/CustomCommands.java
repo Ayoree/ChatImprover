@@ -34,11 +34,11 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
 
 public class CustomCommands {
     public static void Init() {
@@ -46,8 +46,8 @@ public class CustomCommands {
         ClientCommandRegistrationCallback.EVENT.register(CustomCommands::register);
     }
 
-    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess regAccess) {
-        dispatcher.register(ClientCommandManager
+    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext regAccess) {
+        dispatcher.register(ClientCommands
             .literal("debug_messages")
                 .executes(context -> {
                     CommandToScreenHandler.openScreen(
@@ -59,13 +59,13 @@ public class CustomCommands {
         );
 
         SuggestionProvider<FabricClientCommandSource> suggestionProvider = (context, builder) -> getSuggestions(context, builder);
-        dispatcher.register(ClientCommandManager
+        dispatcher.register(ClientCommands
             .literal("ayo")
             .executes(context -> {
-                context.getSource().sendFeedback(Text.of("Используйте `/ayo edit` для настройки и `/ayo open` для открытия меню"));
+                context.getSource().sendFeedback(Component.nullToEmpty("Используйте `/ayo edit` для настройки и `/ayo open` для открытия меню"));
                 return Command.SINGLE_SUCCESS;
             })
-            .then(ClientCommandManager
+            .then(ClientCommands
                 .literal("edit")
                 .executes(context -> {
                     CommandToScreenHandler.openScreen(
@@ -74,7 +74,7 @@ public class CustomCommands {
                     return Command.SINGLE_SUCCESS;
                 })
             )
-            .then(ClientCommandManager
+            .then(ClientCommands
                 .literal("open")
                 .executes(context -> {
                     CommandToScreenHandler.openScreen(
@@ -82,7 +82,7 @@ public class CustomCommands {
                     );
                     return Command.SINGLE_SUCCESS;
                 })
-                .then(ClientCommandManager
+                .then(ClientCommands
                     .argument("input", StringArgumentType.greedyString())
                     .suggests(suggestionProvider)
                     .executes(context -> {
@@ -98,7 +98,7 @@ public class CustomCommands {
 
     private static CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
         String remaining = builder.getRemaining().toLowerCase();
-        context.getSource().getClient().getNetworkHandler().getPlayerList().forEach(player -> {
+        context.getSource().getClient().getConnection().getOnlinePlayers().forEach(player -> {
             final String nickname = player.getProfile().name();
             if (nickname.toLowerCase().startsWith(remaining)) {
                 builder.suggest(nickname);

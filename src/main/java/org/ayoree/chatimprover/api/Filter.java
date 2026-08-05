@@ -23,8 +23,8 @@ package org.ayoree.chatimprover.api;
 import java.util.function.Predicate;
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.network.chat.Component;
 
 /**
  * Just inherit this class and create your own {@link Filter.Provider}'s inside it
@@ -34,7 +34,7 @@ public class Filter {
      * {@code Interface} for approving chat messages to pass
      * {@link ClientReceiveMessageEvents#ALLOW_GAME} listener.
      * <p>
-     * If {@link #validator()} returns {@code true}, then message will <b>not</b> appear in client's {@link ChatHud}.
+     * If {@link #validator()} returns {@code true}, then message will <b>not</b> appear in client's {@link ChatComponent}.
      * <p>
      * You need to create your own class, that implements {@link Provider},
      * and mark it with {@code @AutoService} annotation.
@@ -44,8 +44,8 @@ public class Filter {
     public static interface Provider extends AddonInformer {
         /**
          * @see <a href="https://github.com/Ayoree/ChatImprove-template">ChatImprove template mod example</a>.
-         * @return {@link Predicate} that accepts {@link Text} and returns {@code true} if chat message should be blocked.
+         * @return {@link Predicate} that accepts {@link Component} and returns {@code true} if chat message should be blocked.
          */
-        public Predicate<Text> validator();
+        public Predicate<Component> validator();
     }
 }

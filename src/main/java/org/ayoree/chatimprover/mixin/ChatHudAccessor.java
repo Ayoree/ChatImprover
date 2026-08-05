@@ -19,19 +19,19 @@
 
 package org.ayoree.chatimprover.mixin;
 
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.client.gui.hud.ChatHudLine;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 
 import java.util.List;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ChatHud.class)
+@Mixin(ChatComponent.class)
 public interface ChatHudAccessor {
-    @Accessor("messages")  // yarn 1.21+: private final List<ChatHudLine> messages
-    List<ChatHudLine> getMessages();
+    @Accessor("allMessages")  // 26.2: private final List<GuiMessage> allMessages
+    List<GuiMessage> getMessages();
 
-    @Accessor("scrolledLines")
-    int getScrolledLines();
+    @Accessor("chatScrollbarPos")
+    int getChatScrollbarPos();
 }

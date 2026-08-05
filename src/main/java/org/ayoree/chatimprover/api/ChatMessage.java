@@ -24,12 +24,12 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.network.chat.Component;
 
 /**
  * This class represents every message,
- * that will be displayed in client's {@link ChatHud}.
+ * that will be displayed in client's {@link ChatComponent}.
  * <p>
  * You should create your own class, that extends {@link ChatMessage},
  * and overrides {@link ChatMessage#getChangedMessage()} method.
@@ -40,33 +40,33 @@ import net.minecraft.text.Text;
  */
 public class ChatMessage {
     /**
-     * This field contains original content of the {@link ChatHud}'s message.
+     * This field contains original content of the {@link ChatComponent}'s message.
      */
-    protected final Text m_message;
-    protected Text m_changedMsg;
+    protected final Component m_message;
+    protected Component m_changedMsg;
     
     /**
      * Constructs {@link ChatMessage} object.
      * @param msg original content of the message.
      */
-    public ChatMessage(@NotNull final Text msg) {
+    public ChatMessage(@NotNull final Component msg) {
         m_message = msg;
         m_changedMsg = msg;
     }
 
     /**
      * Getter for {@link #m_message} field.
-     * @return {@link Text}
+     * @return {@link Component}
      */
-    public Text getOrigMessage() {
+    public Component getOrigMessage() {
         return m_message;
     }
 
     /**
      * Getter for {@link #m_changedMsg} field.
-     * @return {@link Text}
+     * @return {@link Component}
      */
-    public Text getChangedMessage() {
+    public Component getChangedMessage() {
         return m_changedMsg;
     }
 
@@ -88,7 +88,7 @@ public class ChatMessage {
     }
 
     /**
-     * Calls {@link Text#getString()} on {@link #m_message} field.
+     * Calls {@link Component#getString()} on {@link #m_message} field.
      * @return {@link String}
      */
     public String getMessageStr() {
@@ -107,18 +107,18 @@ public class ChatMessage {
     public static interface Provider extends AddonInformer {
         /**
          * @see <a href="https://github.com/Ayoree/ChatImprove-template">ChatImprove template mod example</a>.
-         * @return {@link Function} that accepts {@link Text} and returns a new {@link ChatMessage} instance.
+         * @return {@link Function} that accepts {@link Component} and returns a new {@link ChatMessage} instance.
          */
-        public Function<Text, ChatMessage> creator();
+        public Function<Component, ChatMessage> creator();
 
         /**
-         * Be sure that your implementation of {@link #validator()} allows <b>only suitable</b> {@link Text}'s
+         * Be sure that your implementation of {@link #validator()} allows <b>only suitable</b> {@link Component}'s
          * for constructing your inheritances of {@link ChatMessage}.
          * 
          * @see <a href="https://github.com/Ayoree/ChatImprove-template">ChatImprove template mod example</a>.
-         * @return {@link Predicate} that accepts {@link Text} and returns {@code true} if {@link ChatMessage}
-         * can be constructed from this {@link Text}. Otherwise returns {@code false}.
+         * @return {@link Predicate} that accepts {@link Component} and returns {@code true} if {@link ChatMessage}
+         * can be constructed from this {@link Component}. Otherwise returns {@code false}.
          */
-        public Predicate<Text> validator();
+        public Predicate<Component> validator();
     }
 }

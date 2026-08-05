@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'dev.yumi.gradle.licenser' version "${licenser_version}"
 	id 'maven-publish'
 }
@@ -38,18 +38,17 @@ dependencies {
 	annotationProcessor 'com.google.auto.service:auto-service:1.1.1'
 
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	
 	// Modmenu
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 	// OWO
-	modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+	implementation "io.wispforest:owo-lib:${project.owo_version}"
     annotationProcessor "io.wispforest:owo-lib:${project.owo_version}"
 }
 
@@ -62,12 +61,13 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
 
 jar {
@@ -85,7 +85,7 @@ license {
 }
 
 task proguard(type: proguard.gradle.ProGuardTask) {
-	injars tasks.remapJar.archiveFile.get()
+	injars tasks.jar.archiveFile.get()
 	outjars layout.buildDirectory.file("libs/${base.archivesName.get()}-${version}-obf.jar").get().asFile
 	configuration 'proguard-rules.pro'
 
@@ -94,7 +94,7 @@ task proguard(type: proguard.gradle.ProGuardTask) {
         libraryjars "${System.getProperty('java.home')}/jmods/java.base.jmod"
     }
 
-	dependsOn tasks.remapJar
+	dependsOn tasks.jar
 }
 
 
