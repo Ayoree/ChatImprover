@@ -21,11 +21,12 @@ package org.ayoree.chatimprover.internal.handlers;
 
 import static org.ayoree.chatimprover.ChatImprover.CONFIG;
 
-import org.ayoree.chatimprover.internal.factories.ChatMessageFactory;
+import org.ayoree.chatimprover.api.ChatImproverApi;
 import org.ayoree.chatimprover.internal.factories.FilterFactory;
 import org.ayoree.chatimprover.mixin.ChatHudAccessor;
 
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
+import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
@@ -35,7 +36,10 @@ public class ChatHandler {
 
     public static void init() {
         CLIENT = Minecraft.getInstance();
-        ClientReceiveMessageEvents.ALLOW_GAME.register(ChatHandler::onAllowMessage);;
+        // Addons load after this mod, so without an explicit ordering their listeners would run
+        // after `onAllowMessage`, which cancels the event on the `fixChatOnFocus` path.
+        ClientReceiveMessageEvents.ALLOW_GAME.addPhaseOrdering(ChatImproverApi.ADDON_PHASE, Event.DEFAULT_PHASE);
+        ClientReceiveMessageEvents.ALLOW_GAME.register(ChatHandler::onAllowMessage);
         ClientReceiveMessageEvents.MODIFY_GAME.register(ChatHandler::onModifyMessage);
     }
 
@@ -47,23 +51,13 @@ public class ChatHandler {
         final ChatComponent chatHud = CLIENT.gui.hud.getChat();
         if (CONFIG.fixChatOnFocus() && chatHud.isChatFocused() && ((ChatHudAccessor)chatHud).getChatScrollbarPos() == 0) {
             // TODO: add ChatPlus compatibility
-            chatHud.addClientSystemMessage(onModifyMessage(message, isOverlay));
-            chatHud.scrollChat(1);
+            ChatImproverApi.reemit(message);
             return false;
         }
         return true;
     }
 
     private static Component onModifyMessage(final Component origMessage, final boolean overlay) {
-        if (CONFIG.isImproveMessages())
-            if (CONFIG.chatButtons())
-                return ChatMessageFactory.createChatMessage(origMessage).generateChangedMsg().addChatButtons().getChangedMessage();
-            else
-                return ChatMessageFactory.createChatMessage(origMessage).generateChangedMsg().getChangedMessage();
-        else
-            if (CONFIG.chatButtons())
-                return ChatMessageFactory.createChatMessage(origMessage).addChatButtons().getChangedMessage();
-            else
-                return ChatMessageFactory.createChatMessage(origMessage).getOrigMessage();
+        return ChatImproverApi.improve(origMessage);
     }
 }
