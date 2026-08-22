@@ -11,10 +11,16 @@ plugins {
 	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'dev.yumi.gradle.licenser' version "${licenser_version}"
 	id 'maven-publish'
+	id 'eclipse'
 }
 
 compileJava.options.generatedSourceOutputDirectory = file("${projectDir}/build/generated/sources/annotationProcessor/java/main/org/ayoree/chatimprover/internal/configs")
 sourceSets.main.java.srcDirs += [ 'build/generated/sources/annotationProcessor/java/main' ]
+
+// Need this to make owo's ConfigAP wrappers work properly (Intellisense fix)
+eclipse.classpath.file.whenMerged { classpath ->
+	classpath.entries.removeAll { it.kind == 'src' && it.path.endsWith('org/ayoree/chatimprover/internal/configs') }
+}
 
 version = project.mod_version
 group = project.maven_group
