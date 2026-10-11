@@ -24,10 +24,10 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	// ModMenu
-	maven { url 'https://maven.terraformersmc.com/' }
+	maven { url = 'https://maven.terraformersmc.com/' }
 	// OWO lib
-	maven { url 'https://maven.wispforest.io' }
-	maven { url 'https://jitpack.io'}
+	maven { url = 'https://maven.wispforest.io' }
+	maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
@@ -79,7 +79,12 @@ license {
 	rule(file("HEADER.txt"))
 	include("**/*.java")
 	exclude("**/ChatimproverConfig.java")
+	exclude("**/CustomScreenConfig.java")
 }
+
+// The generated owo config wrappers live in a main source dir, which the licenser scans
+tasks.named("checkLicenseMain") { mustRunAfter(tasks.compileJava) }
+tasks.named("applyLicenseMain") { mustRunAfter(tasks.compileJava) }
 
 publishing {
     repositories {

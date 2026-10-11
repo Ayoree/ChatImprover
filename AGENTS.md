@@ -135,6 +135,7 @@ Treat everything in `api/` as published API. Renaming or changing the signature 
 - `internal/configs/ConfigModel` generates `ChatimproverConfig` (`ChatImprover.CONFIG`), and `CustomScreenConfigModel` generates `CustomScreenConfig` (`ChatImprover.CONFIG_CUSTOM_SCREEN`).
   - owo's annotation processor produces these wrappers in `build/generated/sources/annotationProcessor/…`. Never write them by hand. If they show up as missing, run `./gradlew compileJava`.
   - The `generatedSourceOutputDirectory`, `srcDirs` and `eclipse.classpath` tweaks in `build.gradle` exist so that VS Code (Eclipse JDT) resolves these wrappers. Keep them.
+  - Because of them the licenser also scans the generated dir. That is why both wrappers are excluded in `license {}` and the license tasks `mustRunAfter(compileJava)`; without that, Gradle 9 fails the build with an implicit-dependency error.
 - Configs are saved as `config/chatimprover/chatimprover-config.json5` and `custom-screen-config.json5` through reflective (Jankson) serialization. Field names are the JSON keys.
   - Renaming a field silently resets players' saved values. This includes the private `m_*` fields in `customconfig/*`.
   - Keep the no-arg constructors.
