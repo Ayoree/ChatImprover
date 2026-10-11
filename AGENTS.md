@@ -2,6 +2,18 @@
 
 Guidance for AI coding agents (Codex, Cursor, Copilot, Claude Code, …) working in this repository. `CLAUDE.md` imports this file, so keep all shared guidance here.
 
+## First step: ask for a message dump
+
+**Before starting any work on the addons on top of this library, ask the user for a chat recording made with the `-debug-chatimprover` flag**, unless they already gave you one. The exact structure of real server messages saves a lot of tokens and time otherwise spent guessing message formats from code.
+
+Tell the user how to record it:
+1. Start the game with the JVM argument `-Dchatimprover.debug=true` (the launcher's Java arguments field), or in a dev environment with `./gradlew runClient --args="-debug-chatimprover"`.
+2. Join the server.
+3. Trigger the messages in question.
+4. Send the `logs/chatimprover/messages-*.jsonl` file.
+
+See "Message structure dump" below for details. If the user has no recording or says it isn't needed, continue without it.
+
 ## What this is
 
 ChatImprover is a **client-side Fabric mod for Minecraft 26.2 (Java 25)** that acts as a host/framework for **server-specific addons**: separate mods that block ("filter") or rewrite ("improve") incoming server chat messages. This repo contains the host mod and its public API (`org.ayoree.chatimprover.api`). Known addons: [ChatImprove-dexland](https://github.com/Ayoree/ChatImprove-dexland) and [ChatImprove-template](https://github.com/Ayoree/ChatImprove-template). Use them to see real API usage and to check that API changes don't break them.
@@ -16,6 +28,7 @@ Requires a local JDK 25 (Gradle toolchain, no auto-provisioning). All versions l
 |---|---|
 | `./gradlew build` | Compile + `checkLicenses` → `build/libs/chatimprover-<mod_version>.jar`. This is all CI runs (every push/PR). |
 | `./gradlew runClient` | Dev client (ModMenu is on the dev runtime classpath). Game dir is `run/`, configs in `run/config/chatimprover/`. |
+| `./gradlew runClient --args="-debug-chatimprover"` | Dev client that also records the message structure dump (see below). |
 | `./gradlew applyLicenses` | Add the AGPL header from `HEADER.txt` to Java files. `build` fails if a header is missing or altered. |
 | `./gradlew genSources` | Decompile Minecraft (sources jar goes under `.gradle/loom-cache/minecraftMaven/`). For a quick signature check, `javap` on the game jar there also works because names are unobfuscated. |
 | `./gradlew publishToMavenLocal` | Addons list `mavenLocal()` first, so this lets them build against local changes (`org.ayoree:chatimprover:<mod_version>`; the addon's `chat_improver_version` must match). |
@@ -94,7 +107,7 @@ Treat everything in `api/` as published API. Renaming or changing the signature 
   - `{INPUT}` in a command is replaced with the text-box value (the nick).
   - Commands that start with `/` are sent with `sendCommand`; anything else is sent as chat.
   - Right-clicking a player with an empty main hand opens the same screen for that player (`RightClickHandler`, setting `rightclickMenu`).
-- `/debug_messages` opens `LastMessagesScreen`: the last 50 chat lines as a collapsible tree of `Component` siblings, with copy buttons. This is the tool for working out validators for a server's message format.
+- `/debug_messages` opens `LastMessagesScreen`: the last 50 chat lines as a collapsible tree of `Component` siblings, with copy buttons. It shows lines as displayed, i.e. after improvement; for raw server messages use the dump below.
 - From command callbacks, open screens with `CommandToScreenHandler.openScreen(parent -> new X(parent))`. It defers to the next client tick, because a screen set directly from a command gets closed together with the chat screen.
 - ModMenu config screen: `ModMenuIntegration` (`modmenu` entrypoint) opens `ChatimproverConfigScreen`, which stages edits and writes them only on "Save".
 - UI: each screen is a `BaseUIModelScreen<FlowLayout>` that loads `assets/chatimprover/owo_ui/<name>.xml` via `DataSource.asset(Identifier.fromNamespaceAndPath(MOD_ID, "<name>"))`. Java code finds components by XML `id` (`childById`) and builds the dynamic parts in code.
@@ -102,6 +115,20 @@ Treat everything in `api/` as published API. Renaming or changing the signature 
   - `ChatHudAccessor` exposes chat history and scroll position.
   - `FlowLayoutMixin` (with `FlowLayoutAccessor` and `BaseParentComponentInvoker`) adds `swapChilds()` to owo's `FlowLayout`. It is exposed through the duck interface `api.mixin.FlowLayoutOperations` and used for ↑/↓ reordering in the edit screen.
   - Duck interfaces must live outside the `mixin` package.
+
+### Message structure dump (`-debug-chatimprover`)
+
+- `MessageDumpHandler` writes every received chat message to `logs/chatimprover/messages-<yyyy-MM-dd_HH-mm-ss>.jsonl` in the game dir if either of these is set:
+  - the JVM argument `-Dchatimprover.debug=true` (what launchers' Java arguments field takes);
+  - the game argument `-debug-chatimprover` (dev: `runClient --args`).
+
+  Never put `-debug-chatimprover` itself among JVM arguments: the JVM refuses to start with an unknown option.
+- It listens in its own `ALLOW_GAME`/`ALLOW_CHAT` phase ordered before `ADDON_PHASE`, so each record is the raw server message before any filtering or improvement. Action-bar messages are skipped.
+- Format: JSON Lines. The first line is a header whose `schema` documents every field. Each record has:
+  - `plain`: `getString()`.
+  - `tree`: every node's Java access `path`, `content` and own `style` (vanilla JSON), `string`, and `siblings`.
+  - `json`: the whole message as vanilla JSON, decodable with `ComponentSerialization.CODEC`.
+- When writing validators or parsers for an addon, ask the user for a dump recorded on the target server and derive the rules from it; `json` makes ready-made test fixtures.
 
 ### Config (owo-lib)
 

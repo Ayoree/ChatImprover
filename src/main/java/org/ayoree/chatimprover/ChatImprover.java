@@ -26,6 +26,7 @@ import org.ayoree.chatimprover.internal.configs.ChatimproverConfig;
 import org.ayoree.chatimprover.internal.configs.CustomScreenConfig;
 import org.ayoree.chatimprover.internal.handlers.ChatHandler;
 import org.ayoree.chatimprover.internal.handlers.ConnectionHandler;
+import org.ayoree.chatimprover.internal.handlers.MessageDumpHandler;
 import org.ayoree.chatimprover.internal.handlers.RightClickHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class ChatImprover implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ChatHandler.init();
+		MessageDumpHandler.init();
 		ConnectionHandler.init();
 		RightClickHandler.init();
 		CustomCommands.Init();
