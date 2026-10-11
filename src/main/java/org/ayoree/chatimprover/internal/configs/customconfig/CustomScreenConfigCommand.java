@@ -33,6 +33,10 @@ public class CustomScreenConfigCommand {
         m_command = command;
     }
 
+    public CustomScreenConfigCommand(final CustomScreenConfigCommand other) {
+        this(other.m_name, other.m_command);
+    }
+
     public String name() { return m_name; }
     public void name(final String name) { m_name = name; }
     public String command() { return m_command; }

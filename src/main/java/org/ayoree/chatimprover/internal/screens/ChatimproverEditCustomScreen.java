@@ -55,7 +55,7 @@ public class ChatimproverEditCustomScreen extends BaseUIModelScreen<FlowLayout> 
     
     private final Screen m_parent;
     private String m_title = CONFIG_CUSTOM_SCREEN.title();
-    private List<CustomScreenConfigCategory> m_entires = new ArrayList<>(CONFIG_CUSTOM_SCREEN.entries());
+    private List<CustomScreenConfigCategory> m_entires = deepCopy(CONFIG_CUSTOM_SCREEN.entries());
     private ButtonComponent m_btnSave;
 
     private List<Elem<CustomScreenConfigCategory>> m_configCategories = new ArrayList<>();
@@ -104,9 +104,13 @@ public class ChatimproverEditCustomScreen extends BaseUIModelScreen<FlowLayout> 
 
     private void save(ButtonComponent btn) {
         CONFIG_CUSTOM_SCREEN.title(m_title);
-        CONFIG_CUSTOM_SCREEN.entries(m_entires);
+        CONFIG_CUSTOM_SCREEN.entries(deepCopy(m_entires));
         CONFIG_CUSTOM_SCREEN.save();
         btn.active(false);
+    }
+
+    private static List<CustomScreenConfigCategory> deepCopy(final List<CustomScreenConfigCategory> categories) {
+        return new ArrayList<>(categories.stream().map(CustomScreenConfigCategory::new).toList());
     }
 
     private boolean wasConfigChanged() {

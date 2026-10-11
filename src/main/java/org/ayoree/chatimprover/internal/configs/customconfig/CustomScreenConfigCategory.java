@@ -39,6 +39,10 @@ public class CustomScreenConfigCategory{
         m_commands = commands;
     }
 
+    public CustomScreenConfigCategory(final CustomScreenConfigCategory other) {
+        this(other.m_name, new ArrayList<>(other.m_commands.stream().map(CustomScreenConfigCommand::new).toList()));
+    }
+
     public String name() { return m_name; }
     public void name(final String name) { m_name = name; }
 

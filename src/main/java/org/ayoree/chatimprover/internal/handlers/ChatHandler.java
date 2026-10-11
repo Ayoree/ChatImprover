@@ -44,6 +44,9 @@ public class ChatHandler {
     }
 
     private static boolean onAllowMessage(final Component message, final boolean isOverlay) {
+        if (isOverlay)
+            return true;
+
         final boolean isTrash = CONFIG.isBlockTrash() && FilterFactory.testAllFilters(message);
         if (isTrash)
             return false;
@@ -57,7 +60,9 @@ public class ChatHandler {
         return true;
     }
 
-    private static Component onModifyMessage(final Component origMessage, final boolean overlay) {
+    private static Component onModifyMessage(final Component origMessage, final boolean isOverlay) {
+        if (isOverlay)
+            return origMessage;
         return ChatImproverApi.improve(origMessage);
     }
 }
